@@ -1,0 +1,30 @@
+{
+  "name": "anpin-ops-pc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "umi dev",
+    "build": "umi build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "umi": "^2.6.1",
+    "umi-plugin-react": "^1.6.0"
+  },
+  "dependencies": {
+    "classnames": "^2.2.6",
+    "lodash-decorators": "^6.0.1",
+    "memoize-one": "^5.0.0",
+    "moment": "^2.24.0",
+    "nzh": "^1.0.4",
+    "prop-types": "^15.7.2",
+    "qs": "^6.6.0",
+    "react-container-query": "^0.11.0",
+    "react-document-title": "^2.0.3",
+    "react-media": "^1.9.2"
+  }
+}
