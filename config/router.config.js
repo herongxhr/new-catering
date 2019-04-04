@@ -1,203 +1,132 @@
 export default [
-    // // user
-    // {
-    //     path: '/user',
-    //     component: '../layouts/UserLayout',
-    //     routes: [
-    //         { path: '/user', redirect: '/user/login' },
-    //         { path: '/user/login', name: 'login', component: './User/Login' },
-    //         { path: '/user/register', name: 'register', component: './User/Register' },
-    //         {
-    //             path: '/user/register-result',
-    //             name: 'register.result',
-    //             component: './User/RegisterResult',
-    //         },
-    //     ],
-    // },
-    // app
     {
         path: '/',
         component: '../layouts/BasicLayout',
         //Routes: ['src/pages/Authorized'],
         routes: [
-            // dashboard
-            { path: '/', redirect: '/dashboard' },
+            // 工作台
+            { path: '/', redirect: '/index' },
             {
-                path: '/dashboard',
+                path: '/index',
                 name: '工作台',
                 icon: 'dashboard',
+                component: './Index'
             },
             {
-                // 食材库
-                path: '/food-material',
-                name: '食材库',
-                icon: 'food-material',
+                // 菜单中心
+                path: '/menu-center',
+                name: '菜单中心',
+                icon: 'bars',
                 routes: [
+                    { path: '/menu-center', redirect: '/menu-center/menu-list'},
                     {
-                        // 食材，默认页面
-                        path: '/food-material',
-                        component: './FoodMaterial/FoodMaterial',
+                        // 菜单列表
+                        path: '/menu-center/menu-list',
+                        component: './MenuCenter/MenuList',
                     },
                     {
-                        // 食材，待审核页面
-                        path: '/food-material/wait-confirm',
-                        component: './FoodMaterial/MaterialWaitConfirm',
+                        // 模板卡片列表
+                        path: '/menu-center/menu-template',
+                        component: './MenuCenter/MenuTemplate',
                     },
                     {
-                        // 食材之食材规格信息
-                        path: '/food-material/spec-info',
-                        component: './FoodMaterial/SpecInfo',
+                        // 统一菜单详情
+                        path: '/menu-center/unified-menu/details',
+                        component: './MenuCenter/MenuDetails',
                     },
                     {
-                        // 食材之食材规格参数
-                        path: '/food-material/material-details',
-                        component: './FoodMaterial/MaterialDetails',
+                        // 我的菜单详情
+                        path: '/menu-center/my-menu/details',
+                        component: './MenuCenter/MenuDetails',
                     },
                     {
-                        // 食材之食材详情
-                        path: '/food-material/food-details',
-                        component: './FoodMaterial/FoodDetails',
+                        // 模板详情
+                        path: '/menu-center/template/details',
+                        component: './MenuCenter/TemplateDetails',
                     },
                     {
-                        // 食材之新增与编辑
-                        path: '/food-material/edit-material',
-                        component: './FoodMaterial/EditMaterial',
+                        // 新建菜单
+                        path: '/menu-center/my-menu/custom',
+                        component: './MenuCenter/CustomMenu',
+                    },
+                    {
+                        // 编辑菜单
+                        path: '/menu-center/my-menu/update',
+                        component: './MenuCenter/CustomMenu',
+                    },
+                    {
+                        // 新建模板
+                        path: '/menu-center/menu-template/custom',
+                        component: './MenuCenter/CutomTemplate',
+                    },
+                    {
+                        // 编辑模板
+                        path: '/menu-center/menu-template/update',
+                        component: './MenuCenter/CutomTemplate',
                     },
                 ],
             },
             {
-                // 辅料
-                path: '/dish-ingredients',
-                name: '辅料库',
-                icon: 'dish-ingredients',
-                routes: [
-                    {
-                        // 默认页面
-                        path: '/dish-ingredients',
-                        component: './DishIngredients/DishIngredients',
-                    },
-                    {
-                        // 待审核页面
-                        path: '/dish-ingredients/wait-confirm',
-                        component: './DishIngredients/IngredientsWaitConfirm',
-                    },
-                    {
-                        // 新增或编辑
-                        path: '/dish-ingredients/edit-ingredients',
-                        component: './DishIngredients/EditIngredients',
-                    },
-                ],
+                // 辅料超市
+                path: '/supermarket',
+                name: '辅料超市',
+                icon: 'shopping',
+                component: './Supermarket'
             },
             {
-                // 菜品库
-                path: '/dish-library',
-                name: '菜品库',
-                icon: 'dish-library',
+                // 采购订单
+                path: '/pur-order',
+                name: '采购订单',
+                icon: 'profile',
                 routes: [
+                    { path: '/pur-order', redirect: '/pur-order/list'},
                     {
-                        // 默认页
-                        path: '/dish-library',
-                        component: './DishLibrary/DishLibrary',
+                        // 列表页
+                        path: '/pur-order/list',
+                        component: './PurOrder/PurOrderList',
                     },
                     {
                         // 详情页
-                        path: '/dish-library/dish-details',
-                        component: './DishLibrary/DishDetails',
-                    },
-                    {
-                        // 新增或编辑
-                        path: '/dish-library/edit-dish',
-                        component: './DishLibrary/EditDish',
+                        path: '/pur-order/details',
+                        component: './PurOrder/PurOrderDetails',
                     },
                 ],
             },
             {
-                // 属性类目管得
-                path: '/attr-catalog-manage',
-                name: '属性类目',
+                // 配送验收
+                path: '/delivery-acceptance',
+                name: '配送验收',
                 icon: 'attr-catalog-manage',
                 routes: [
+                    { path: '/deliver-acceptance', redirect: '/deliver-acceptance/list'},
                     {
-                        // 默认页面
-                        path: '/attr-catalog-manage',
-                        component: './AttrCatalogManage/AttrCatalogManage',
+                        // 列表页
+                        path: '/deliver-acceptance/list',
+                        component: './DeliveryAcceptance/DeliveryAcceptanceList',
                     },
+                    // {
+                    //     // 详情页
+                    //     path: '/deliver-acceptance/details',
+                    //     component: './DeliveryAcceptance/DeliveryAcceptanceDetails',
+                    // },
                 ],
             },
             {
-                // 类别管理
-                path: '/catalog-manage',
-                name: '类别管理',
+                // 台帐
+                path: '/parameter',
+                name: '台帐',
                 icon: 'catalog-manage',
                 routes: [
+                    { path: '/parameter', redirect: '/parameter/list'},
                     {
-                        // 默认页
-                        path: '/catalog-manage',
-                        component: './CatalogManage/CatalogManage',
+                        // 列表页
+                        path: '/parameter/list',
+                        component: './Parameter/ParameterList',
                     },
                     {
-                        // 辅料类别页
-                        path: '/catalog-manage/ingredients',
-                        component: './CatalogManage/Ingredients',
-                    },
-                ],
-            },
-            {
-                // 品牌管理
-                path: '/brand-manage',
-                name: '品牌管理',
-                icon: 'brand-manage',
-                routes: [
-                    {
-                        // 品牌管理
-                        path: '/brand-manage',
-                        component: './BrandManage/BrandManage',
-                    },
-                ],
-            },
-            {
-                // 模板管理
-                path: '/template-manage',
-                name: '菜单模板',
-                icon: 'template-manage',
-                routes: [
-                    {
-                        // 默认页面
-                        path: '/template-manage',
-                        component: './TemplateManage/TemplateManage',
-                    },
-                    {
-                        // 新增或编辑
-                        path: '/template-manage/edit-template',
-                        component: './TemplateManage/EditTemplate',
-                    },
-                ],
-            },
-            // 帐户管理
-            {
-                name: '用户管理',
-                icon: 'user',
-                path: '/account',
-                routes: [
-                    {
-                        // 默认页
-                        path: '/account/center/',
-                        component: './Account/Center',
-                    },
-                    {
-                        // 管理单位
-                        path: '/account/superior',
-                        component: './Account/Superior',
-                    },
-                    {
-                        // 餐饮单位
-                        path: '/account/catering',
-                        component: './Account/Catering',
-                    },
-                    {
-                        // 供应商
-                        path: '/account/center/supplier',
-                        component: './Account/Supplier',
+                        // 详情页
+                        path: '/parameter/details',
+                        component: './Parameter/ParameterDetails',
                     },
                 ],
             },

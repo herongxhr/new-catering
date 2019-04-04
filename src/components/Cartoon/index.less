@@ -1,0 +1,60 @@
+.cartoon {
+  border:1px solid #FFFFFF;
+  width: 200px;
+  height: 42px;
+  line-height: 42px;
+  text-align: center;
+  box-shadow: 0px 2px 8px 2px rgba(0, 0, 0, 0.2);
+  animation-name:myfirst;
+  animation-duration:3s;
+  animation-iteration-count:infinite;
+  font-size: 12px;
+  position: relative;
+  top: -10px;
+  left: 17px;
+  .iconfont {
+    color:orange;
+    animation-name:myfont;
+    animation-duration:2s;
+    animation-iteration-count:infinite;
+    display:inline-block;
+    font-size: 12px;
+    padding-right: 15px;
+  }
+  .triangle {
+    width:0px;  
+    height:0px;  
+    border: 10px solid;  
+    border-color: white transparent transparent transparent;
+    position: relative;
+    left: 100px;
+    top: -2px;
+  }
+}
+
+
+@keyframes myfirst
+{
+  0%   {
+    transform: perspective(1000px) translateZ(0px)	;
+  }
+  50%  {
+    transform: perspective(1000px) translateZ(100px) ;
+  }
+  100% {
+    transform: perspective(1000px) translateZ(0px)	;
+  }
+}
+
+@keyframes myfont
+{
+  0%   {
+    transform: perspective(1000px) translateZ(0px)	;
+  }
+  50%  {
+    transform: perspective(1000px) translateZ(200px) ;
+  }
+  100% {
+    transform: perspective(1000px) translateZ(0px)	;
+  }
+}

@@ -1,0 +1,26 @@
+
+.breadcrumbWithTabs{
+    background: #fff;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    .centerLayout {
+        width: 1160px;
+        margin: 0 auto;
+        padding-left: 24px;
+        background: #fff;
+        .breadcrumb{
+            height: 60px;
+            line-height: 60px;
+        }
+        .tabs {
+            height: 44px;
+            margin: 0 0 0 -8px;
+            :global {
+              // 1px 可以让选中效果显示完成
+              .ant-tabs-bar {
+                margin-bottom: 1px;
+                border-bottom: none;
+              }
+            }
+          }
+    }  
+}

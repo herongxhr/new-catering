@@ -1,0 +1,20 @@
+.menuWrap {
+  margin: 0 auto;
+  width: 1200px;
+  display: flex;
+  align-items: center;
+  .baseMenu {
+    width: 100%;
+  }
+  :global{
+    .ant-menu-item{
+      width: 130px;
+      height: 70px;
+      line-height: 70px;
+      font-weight: bolder;
+    }
+    .ant-menu-item-disabled {
+      cursor: default;
+    }
+  }
+}

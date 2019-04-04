@@ -1,0 +1,43 @@
+.filterWraper {
+    width: 100%;
+    margin:30px 0;
+    border-radius: 4px;
+    .title {
+        font-weight: bolder;
+        width: 50px;
+        height: 32px;
+        line-height: 32px;
+        margin-left: 30px;
+    }
+    .filterRow {
+        display: inline-block;
+        li {
+            display: inline-block;
+            cursor: pointer;
+            color: rgba(0, 0, 0 , 0.65);
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            margin-right: 20px;
+            padding: 0 10px;
+            border-radius: 4px;
+        }
+        .selected {
+            background-color: rgba(84, 196, 206 ,1);
+            border-radius: 4px;
+            color: #fff;
+        }
+        .brandWrapper {
+            display: table-cell;
+        }
+    }
+    .expanded {
+        display: inline-block;
+        max-height: 100px;
+    }
+}
+
+.moreBrand{
+    cursor: pointer;
+    font-weight: bold;
+}
