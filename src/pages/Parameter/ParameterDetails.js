@@ -12,7 +12,7 @@ import { withRouter } from "react-router";
 import { connect } from 'dva';
 
 
-import './index.less'
+import './ParameterDetails.less'
 
 const bread = [{
   href:'parameter',

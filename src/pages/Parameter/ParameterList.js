@@ -7,7 +7,7 @@
 import React from 'react'
 import Bread from '../../components/Bread'
 import ParameterTable from '../../components/ParameterTable'
-import './index.less'
+import './ParameterList.less'
 
 class Parameter extends React.Component {
   render() {

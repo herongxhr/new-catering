@@ -1,24 +1,21 @@
-import React, { Suspense } from 'react';
-import { Layout } from 'antd';
-import DocumentTitle from 'react-document-title';
+import React from 'react';
 import { connect } from 'dva';
-import { ContainerQuery } from 'react-container-query';
+import { Layout } from 'antd';
+import Header from './Header';
+import SiderMenu from '@/components/SiderMenu';
+import logo from '../assets/logo.svg';
 import classNames from 'classnames';
 import Media from 'react-media';
-import logo from '../assets/logo.svg';
-import Footer from './Footer';
-import Header from './Header';
 import Context from './MenuContext';
 import PageLoading from '@/components/PageLoading';
-import SiderMenu from '@/components/SiderMenu';
+import DocumentTitle from 'react-document-title';
+import { ContainerQuery } from 'react-container-query';
 import getPageTitle from '@/utils/getPageTitle';
 import styles from './BasicLayout.less';
 
 // lazy load SettingDrawer
 //const SettingDrawer = React.lazy(() => import('@/components/SettingDrawer'));
-
 const { Content } = Layout;
-
 const query = {
     'screen-xs': {
         maxWidth: 575,
@@ -43,36 +40,24 @@ const query = {
         minWidth: 1600,
     },
 };
-
 class BasicLayout extends React.Component {
     componentDidMount() {
-        console.log(this.props);
         const {
             dispatch,
-            // umi会自动导入路由设置中的文件
-            // 并在加入到组件属性中中出现
             route: { routes, authority },
         } = this.props;
-        // dispatch({
-        //     // 获取当前用户信息
-        //     type: 'user/fetchCurrent',
-        // });
-        // dispatch({
-        // 获取配置，直接从本地获取，不用请求
-        // 详见setting model文件
-        //     type: 'setting/getSetting',
-        // });
-
-        // 此方法执行后，会在全局state中增加以下属性
-        // menuData, breadcrumbNameMap, routerData: routes
         dispatch({
-            // 获取菜单数据，也是从本地获取
+            type: 'user/fetchCurrent',
+        });
+        dispatch({
+            type: 'setting/getSetting',
+        });
+        dispatch({
             type: 'menu/getMenuData',
             payload: { routes, authority },
         });
     }
 
-    // 不涉及this可以不用箭头函数
     getContext() {
         const { location, breadcrumbNameMap } = this.props;
         return {
@@ -100,17 +85,8 @@ class BasicLayout extends React.Component {
         });
     };
 
-    renderSettingDrawer = () => {
-        // Do not render SettingDrawer in production
-        // unless it is deployed in preview.pro.ant.design as demo
-        if (process.env.NODE_ENV === 'production' && APP_TYPE !== 'site') {
-            return null;
-        }
-        return <SettingDrawer />;
-    };
-
     render() {
-        const {
+        const { // 大部分属性来自setting model
             navTheme,
             layout: PropsLayout,
             children,
@@ -125,6 +101,7 @@ class BasicLayout extends React.Component {
         const contentStyle = !fixedHeader ? { paddingTop: 0 } : {};
         const layout = (
             <Layout>
+                {/* 是否显示边栏菜单布局 */}
                 {isTop && !isMobile ? null : (
                     <SiderMenu
                         logo={logo}
@@ -151,7 +128,7 @@ class BasicLayout extends React.Component {
                     <Content className={styles.content} style={contentStyle}>
                         {children}
                     </Content>
-                    <Footer />
+                    {/* <Footer /> */}
                 </Layout>
             </Layout>
         );
@@ -166,7 +143,6 @@ class BasicLayout extends React.Component {
                         )}
                     </ContainerQuery>
                 </DocumentTitle>
-                {/* <Suspense fallback={<PageLoading />}>{this.renderSettingDrawer()}</Suspense> */}
             </React.Fragment>
         );
     }

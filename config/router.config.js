@@ -9,7 +9,7 @@ export default [
             {
                 path: '/index',
                 name: '工作台',
-                icon: 'dashboard',
+                icon: 'home',
                 component: './Index'
             },
             {
@@ -96,7 +96,7 @@ export default [
                 // 配送验收
                 path: '/delivery-acceptance',
                 name: '配送验收',
-                icon: 'attr-catalog-manage',
+                icon: 'bar-chart',
                 routes: [
                     { path: '/deliver-acceptance', redirect: '/deliver-acceptance/list'},
                     {
@@ -115,7 +115,7 @@ export default [
                 // 台帐
                 path: '/parameter',
                 name: '台帐',
-                icon: 'catalog-manage',
+                icon: 'read',
                 routes: [
                     { path: '/parameter', redirect: '/parameter/list'},
                     {
