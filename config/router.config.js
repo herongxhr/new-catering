@@ -5,12 +5,12 @@ export default [
         //Routes: ['src/pages/Authorized'],
         routes: [
             // 工作台
-            { path: '/', redirect: '/index' },
+            { path: '/', redirect: '/home' },
             {
-                path: '/index',
-                name: '工作台',
+                path: '/home',
+                name: 'home',
                 icon: 'home',
-                component: './Index'
+                component: './Home/Home'
             },
             {
                 // 菜单中心

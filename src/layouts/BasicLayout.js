@@ -86,6 +86,7 @@ class BasicLayout extends React.Component {
     };
 
     render() {
+        console.log('props',this.props)
         const { // 大部分属性来自setting model
             navTheme,
             layout: PropsLayout,

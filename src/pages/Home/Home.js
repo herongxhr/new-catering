@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './index.less';
+import './Home.less';
 import TodayMenuCard from '../../components/TodayMenuCard/TodayMenuCard'
 import TodoListCard from '../../components/TodoListCard/TodoListCard'
 import Accepting from '../../components/Accepting/Accepting'
