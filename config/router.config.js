@@ -15,7 +15,7 @@ export default [
             {
                 // 菜单中心
                 path: '/menu-center',
-                name: '菜单中心',
+                name: 'menucenter',
                 icon: 'bars',
                 routes: [
                     { path: '/menu-center', redirect: '/menu-center/menu-list'},
@@ -69,14 +69,14 @@ export default [
             {
                 // 辅料超市
                 path: '/supermarket',
-                name: '辅料超市',
+                name: 'supermarket',
                 icon: 'shopping',
                 component: './Supermarket/Supermarket'
             },
             {
                 // 采购订单
                 path: '/pur-order',
-                name: '采购订单',
+                name: 'purorder',
                 icon: 'profile',
                 routes: [
                     { path: '/pur-order', redirect: '/pur-order/list'},
@@ -95,7 +95,7 @@ export default [
             {
                 // 配送验收
                 path: '/delivery-acceptance',
-                name: '配送验收',
+                name: 'deliveryacceptance',
                 icon: 'bar-chart',
                 routes: [
                     { path: '/deliver-acceptance', redirect: '/deliver-acceptance/list'},
@@ -114,7 +114,7 @@ export default [
             {
                 // 台帐
                 path: '/parameter',
-                name: '台帐',
+                name: 'parameter',
                 icon: 'read',
                 routes: [
                     { path: '/parameter', redirect: '/parameter/list'},

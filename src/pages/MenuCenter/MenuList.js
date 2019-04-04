@@ -7,6 +7,7 @@ import styles from './MenuList.less';
 import BreadcrumbWithTabs from '../../components/BreadcrumbWithTabs';
 import CommonFilter from '../../components/CommonFilter';
 import { getYMD } from '../../utils/utils';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 // breadcrumbWithTabs中tabs数据
 const tabList = [
@@ -151,34 +152,36 @@ class MenuCenter extends React.Component {
 					onChange={this.handleTabChange}
 					activeTabKey={'unified-menu'}
 				/>
-				<Card className={styles.tableList} bordered={false}>
-					<div >
-						<CommonFilter
-							// 过滤器所用控件数据
-							filterData={filterData}
-							// 控制改变时的回调
-							handleFilterChange={this.getMenuData}
-							defaultStatus={status}
-						/>
-						<Table
-							columns={tableColumns}
-							dataSource={records}
-							rowKey="id"
-							onRow={(record) => {
-								return {
-									onClick: () => this.handleShowDetail(record)
-								}
-							}}
-							pagination={{
-								current: menuList.current || 1,
-								pageSize: menuList.size || 10,
-								total: menuList.total || 0
-							}}
-							onChange={({ current, pageSize }) =>
-								this.getMenuData({ current, pageSize })}
-						/>
-					</div>
-				</Card>
+				<PageHeaderWrapper>
+					<Card className={styles.tableList} bordered={false}>
+						<div >
+							<CommonFilter
+								// 过滤器所用控件数据
+								filterData={filterData}
+								// 控制改变时的回调
+								handleFilterChange={this.getMenuData}
+								defaultStatus={status}
+							/>
+							<Table
+								columns={tableColumns}
+								dataSource={records}
+								rowKey="id"
+								onRow={(record) => {
+									return {
+										onClick: () => this.handleShowDetail(record)
+									}
+								}}
+								pagination={{
+									current: menuList.current || 1,
+									pageSize: menuList.size || 10,
+									total: menuList.total || 0
+								}}
+								onChange={({ current, pageSize }) =>
+									this.getMenuData({ current, pageSize })}
+							/>
+						</div>
+					</Card>
+				</PageHeaderWrapper>
 			</div>
 		);
 	}

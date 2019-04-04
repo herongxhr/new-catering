@@ -1,18 +1,18 @@
-import { queryTodoList, querytodayMenu,querydeviceInfo,queryStatistics } from '../services/api';
+import { queryTodoList, querytodayMenu, querydeviceInfo, queryStatistics } from '../services/api';
 
 export default {
     namespace: 'home',
     state: {
         todoList: [],
-        todayMenu:{},
-        deviceInfo:[],
-        statistics:[]
+        todayMenu: {},
+        deviceInfo: [],
+        statistics: []
     },
-    effects: {     
+    effects: {
         *queryTodoLists(_, { call, put }) {
             //call方法首参数为要调用的异步方法
-            const  data  = yield call(queryTodoList);
-             //console.log(data);
+            const data = yield call(queryTodoList);
+            //console.log(data);
             yield put({
                 type: 'saveTodoLists',
                 payload: data || [],
@@ -20,31 +20,31 @@ export default {
         },
         *querytodayMenu(_, { call, put }) {
             //call方法首参数为要调用的异步方法
-            const    data  = yield call(querytodayMenu);
+            const data = yield call(querytodayMenu);
             //console.log(data);
             yield put({
                 type: 'saveTodayMenu',
                 payload: data || {},
             });
         },
-        *querydeviceInfo({payload}, { call, put }) {
+        *querydeviceInfo({ payload }, { call, put }) {
             //call方法首参数为要调用的异步方 法
-            const  data  = yield call(querydeviceInfo);
+            const data = yield call(querydeviceInfo);
             //console.log(data);
             yield put({
                 type: 'savedeviceInfo',
                 payload: data || {},
             });
         },
-        *queryStatistics({payload}, { call, put }) {
-            const  data  = yield call(queryStatistics,payload);
-           //console.log(data)
+        *queryStatistics({ payload }, { call, put }) {
+            const data = yield call(queryStatistics, payload);
+            //console.log(data)
             yield put({
                 type: 'savestatistics',
                 payload: data || {},
             });
         }
-        
+
     },
     reducers: {
         saveTodoLists(state, { payload }) {

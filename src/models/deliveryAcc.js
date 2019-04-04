@@ -1,60 +1,62 @@
-import { queryDelivery ,  queryCount , queryDistributionDetail , queryDetailReplacement ,
-    queryExecute , queryTicket,querySignature } from '../services/api';
+import {
+    queryDelivery, queryCount, queryDistributionDetail, queryDetailReplacement,
+    queryExecute, queryTicket, querySignature
+} from '../services/api';
 
 export default {
-    namespace:'deliveryAcce',
+    namespace: 'deliveryAcce',
     state: {
         delivery: {},
-        count:{},
-        detailData:{},
-        execute:'',
-        ticketData:[],
-        signatureData:[]
+        count: {},
+        detailData: {},
+        execute: '',
+        ticketData: [],
+        signatureData: []
     },
     effects: {
-        *queryDelivery({payload}, { call, put }) {
-            const data = yield call(queryDelivery,payload);
-           // console.log(data)
+        *queryDelivery({ payload }, { call, put }) {
+            const data = yield call(queryDelivery, payload);
+            // console.log(data)
             yield put({
-                type:'saveDelivery',
+                type: 'saveDelivery',
                 payload: data,
             })
         },
-        *queryCount({payload}, { call, put }) {
-            const data = yield call(queryCount,payload);
+        *queryCount({ payload }, { call, put }) {
+            const data = yield call(queryCount, payload);
             yield put({
-                type:'savecount',
+                type: 'savecount',
                 payload: data,
             })
         },
-        *queryDistributionDetail({payload}, { call, put }) {
-            const data = yield call(queryDistributionDetail,payload);
+        *queryDistributionDetail({ payload }, { call, put }) {
+            const data = yield call(queryDistributionDetail, payload);
             //console.log(data)
             yield put({
-                type:'savedetail',
+                type: 'savedetail',
                 payload: data,
             })
         },
-        *queryExecute({payload}, { call, put }) {
-            const data = yield call(queryExecute,payload);
+        *queryExecute({ payload }, { call, put }) {
+            const data = yield call(queryExecute, payload);
             yield put({
-                type:'saveExecute',   
+                type: 'saveExecute',
                 payload: data,
             })
         },
-        *queryTicket({payload}, { call, put }) {
-            const data = yield call(queryTicket,payload);
+        *queryTicket({ payload }, { call, put }) {
+            const data = yield call(queryTicket, payload);
             //console.log(data)
             yield put({
-                type:'saveTicket',   
+                type: 'saveTicket',
                 payload: data,
             })
         },
-        *querySignature({payload}, { call, put }) {
-            const data = yield call(querySignature,payload);
+        *querySignature({ payload }, { call, put }) {
+            const data = yield call(querySignature, payload);
             //console.log(data)
             yield put({
-                type:'saveSignature',   
+                type: 'saveSignature',
                 payload: data,
             })
         },

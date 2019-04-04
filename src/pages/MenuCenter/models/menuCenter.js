@@ -17,7 +17,7 @@ import {
     queryHasAnyTemplate,
     queryFoodDetail
 
-} from '../services/api';
+} from '../../../services/api';
 
 export default {
     namespace: 'menuCenter',

@@ -1,213 +1,245 @@
-//@import '~antd/lib/style/themes/default.less';
-.App-content {
-  min-height: 240px;
-  background: #F0F0F2;
-  padding: 20px 0;
-}
+.app {
+  max-width: 1160px;
+  margin   : auto;
 
-.App-content-header {
-  display: flex;
-  justify-content: center;
-}
+  //@import '~antd/lib/style/themes/default.less';
+  .content {
+    min-height: 240px;
+    background: #F0F0F2;
 
-.App-pic {
-  width: 900px;
-  height: 150px;
-}
+    .header {
+      display        : flex;
+      justify-content: center;
 
-.App-time {
-  width: 260px;
-  height: 150px;
-  padding: 35px 71px 35px 73px;
-  background: #fff;
-}
-
-.tools {
-  .ant-card-body {
-    border-top:1px solid #e8e8e8;
-    background: #fff;
-  }
-
-  .toolsbtn {
-    width: 130px;
-    height: 32px;
-    line-height: 20px;
-    border-radius: 4px;
-    background-color: rgba(84, 196, 206, 1);
-    color: rgba(255, 255, 255, 1);
-    font-size: 14px;
-    text-align: center;
-    border: none;
-  }
-
-  .cgml {
-    margin-right: 40px;
-    margin-bottom: 20px;
-  }
-}
-
-h3 {
-  font-size: 35px;
-  font-weight: 600;
-  color: #000;
-  margin-bottom: 10px;
-  width: 116px;
-  height: 50px;
-  text-align: center;
-}
-
-h6 {
-  width:150px;
-  height:20px;
-  margin: 0;
-  font-size: 14px;
-  color: rgba(0, 0, 0, 0.65)
-}
-
-.App-content-data {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
-}
-
-p {
-  margin: 0;
-  padding: 0;
-}
-.ant-table-thead{
-color: rgba(0, 0, 0, 0.85);
-font-family: '方正兰亭黑-粗';
-font-weight: 700;
-}
-.App-content-accepting {
-  margin: 0 auto;
-  width: 1160px;
-  min-height: 282px;
-  background: #fff;
-  padding-Top: 22px;
-
-  .ant-tabs-tab {
-    font-size: 16px;
-    font-weight: 600
-  }
-  .ant-tabs-nav {
-    margin-left: 20px;
-  }
-  
-}
-
-.extra {
-  font-size: 14px;
-  color: #54C4CE;
-  padding-right: 30px;
-}
-.App-content-paying-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.App-content-paying {
-  width: 790px;
-  min-height: 290px;
-  padding: 0 20px;
-
-  .ant-radio-group {
-    margin-top: 17px;
-  }
-
-  .antd-pro-charts-pie-chart {
-    width: 206px;
-    height: 206px;
-    margin-left: 47px;
-  }
-
-  .antd-pro-charts-pie-legend {
-    width: 468px;
-    margin-left: 41px;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.85);
-    font-family: 'PingFangSC-PingFangSC-regular';
-    li> {
-      margin-bottom: 30px;
-      >.antd-pro-charts-pie-dot{
-        position: relative;
-        top: -1px;
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        margin-right: 8px;
-        border-radius: 8px;
-      }
-      .antd-pro-charts-pie-percent {
-        margin-right: 15px;
-        color: rgba(0, 0, 0, 0.5)
+      .pic {
+        width : 900px;
+        height: 150px;
       }
 
-      .ant-divider,
-      .ant-divider-vertical {
-        width: 2px;
-        background: rgba(0, 0, 0, 0.3)
+      .time {
+        width     : 260px;
+        height    : 150px;
+        padding   : 35px 71px 35px 73px;
+        background: #fff;
+      }
+    }
+
+    .data {
+      display        : flex;
+      justify-content: center;
+    }
+
+    .tools {
+      :global {
+        .ant-card-body {
+          border-top: 1px solid #e8e8e8;
+          background: #fff;
+        }
+      }
+
+      .toolsbtn {
+        width           : 130px;
+        height          : 32px;
+        line-height     : 20px;
+        border-radius   : 4px;
+        background-color: rgba(84, 196, 206, 1);
+        color           : rgba(255, 255, 255, 1);
+        font-size       : 14px;
+        text-align      : center;
+        border          : none;
+      }
+
+      .cgml {
+        margin-right : 40px;
+        margin-bottom: 20px;
       }
     }
   }
 
-  .antd-pro-charts-pie-pie {
-    display: flex;
+  h3 {
+    font-size    : 35px;
+    font-weight  : 600;
+    color        : #000;
+    margin-bottom: 10px;
+    width        : 116px;
+    height       : 50px;
+    text-align   : center;
+  }
+
+  h6 {
+    width    : 150px;
+    height   : 20px;
+    margin   : 0;
+    font-size: 14px;
+    color    : rgba(0, 0, 0, 0.65)
+  }
+
+  .data {
+    display        : flex;
     justify-content: center;
-    align-items: center;
-  }
-}
-
-.App-content-opening {
-  width: 350px;
-  height: 290px;
-  margin-left: 20px;
-  .ant-divider, .ant-divider-horizontal{
-    margin:0;
-}
-}
-
-.App-content-paying,
-.App-content-opening {
-  background: #fff;
-}
-
-.device {
-  font-size: 16px;
-  margin-left: 20px;
-
-  .ant-table-title {
-    position: relative;
-    top: 1px;
-    border-radius: 4px 4px 0 0;
-  }
-}
-
-.timeTitle{
-  height:65;
-  width:226px;
-  margin-left:20px;
-  line-height: 65px; 
-  font-size:16px;
-}
-.openingItem{
-  display: flex;
-  justify-content: space-between;
-  padding: 19px 24px 18px 20px;
-  width:350;
-  height: 54px;
- >span{
-    display: block;
- }
-}
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+    margin         : 20px 0;
   }
 
-  to {
-    transform: rotate(360deg);
+  p {
+    margin : 0;
+    padding: 0;
+  }
+
+  .ant-table-thead {
+    color      : rgba(0, 0, 0, 0.85);
+    font-family: '方正兰亭黑-粗';
+    font-weight: 700;
+  }
+
+  .accepting {
+    margin     : 0 auto;
+    width      : 1160px;
+    min-height : 282px;
+    background : #fff;
+    padding-Top: 22px;
+
+    :global {
+      .ant-tabs-tab {
+        font-size  : 16px;
+        font-weight: 600
+      }
+
+      .ant-tabs-nav {
+        margin-left: 20px;
+      }
+    }
+
+  }
+
+  .extra {
+    font-size    : 14px;
+    color        : #54C4CE;
+    padding-right: 30px;
+  }
+
+  .wrapper {
+    display        : flex;
+    justify-content: center;
+    margin-top     : 20px;
+
+    .paying {
+      width     : 790px;
+      min-height: 290px;
+      padding   : 0 20px;
+
+      :global {
+        .ant-radio-group {
+          margin-top: 17px;
+        }
+      }
+
+      .antd-pro-charts-pie-chart {
+        width      : 206px;
+        height     : 206px;
+        margin-left: 47px;
+      }
+
+      .antd-pro-charts-pie-legend {
+        width      : 468px;
+        margin-left: 41px;
+        font-size  : 14px;
+        font-weight: 500;
+        color      : rgba(0, 0, 0, 0.85);
+        font-family: 'PingFangSC-PingFangSC-regular';
+
+        li> {
+          margin-bottom: 30px;
+
+          >.antd-pro-charts-pie-dot {
+            position     : relative;
+            top          : -1px;
+            display      : inline-block;
+            width        : 8px;
+            height       : 8px;
+            margin-right : 8px;
+            border-radius: 8px;
+          }
+
+          .antd-pro-charts-pie-percent {
+            margin-right: 15px;
+            color       : rgba(0, 0, 0, 0.5)
+          }
+
+          .ant-divider,
+          .ant-divider-vertical {
+            width     : 2px;
+            background: rgba(0, 0, 0, 0.3)
+          }
+        }
+      }
+
+      .antd-pro-charts-pie-pie {
+        display        : flex;
+        justify-content: center;
+        align-items    : center;
+      }
+    }
+  }
+
+
+
+  .opening {
+    width      : 350px;
+    height     : 290px;
+    margin-left: 20px;
+
+    :global {
+
+      .ant-divider,
+      .ant-divider-horizontal {
+        margin: 0;
+      }
+    }
+  }
+
+  .paying,
+  .opening {
+    background: #fff;
+  }
+
+  .device {
+    font-size  : 16px;
+    margin-left: 20px;
+
+    .ant-table-title {
+      position     : relative;
+      top          : 1px;
+      border-radius: 4px 4px 0 0;
+    }
+  }
+
+  .timeTitle {
+    height     : 65;
+    width      : 226px;
+    margin-left: 20px;
+    line-height: 65px;
+    font-size  : 16px;
+  }
+
+  .openingItem {
+    display        : flex;
+    justify-content: space-between;
+    padding        : 19px 24px 18px 20px;
+    width          : 350;
+    height         : 54px;
+
+    >span {
+      display: block;
+    }
+  }
+
+  @keyframes applogo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
   }
 }

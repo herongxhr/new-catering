@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './TodayMenuCard.less';
+import styles from './TodayMenuCard.less';
 import { Scrollbars } from 'react-custom-scrollbars';
 import homeToday from './today.png';
 import { Empty } from 'antd';
@@ -10,16 +10,16 @@ class TodayMenuCard extends Component {
     const breakfast = todayMenu.breakfast || []
     const lunch = todayMenu.lunch || []
     const dessert = todayMenu.dessert || []
-    const dinner = todayMenu.dinner ||[]
+    const dinner = todayMenu.dinner || []
     return (
-      <div className="MenuCard">
-        <div className='title'>今日菜单</div>
-        <div className='todaymenu'>
-          <div className='breakfast'>
+      <div className={styles.menuCard}>
+        <div className={styles.title}>今日菜单</div>
+        <div className={styles.todaymenu}>
+          <div className={styles.breakfast}>
             <div>早餐</div>
-            <Scrollbars style={{width:180, height:334,marginTop:2}}>
+            <Scrollbars style={{ width: 180, height: 334, marginTop: 2 }}>
               {
-                (breakfast.length >0) ?
+                (breakfast.length > 0) ?
                   breakfast.map((data, index) => <li key={index}>{data}</li>) : <Empty
                     image={homeToday}
                     description={
@@ -31,11 +31,11 @@ class TodayMenuCard extends Component {
               }
             </Scrollbars>
           </div>
-          <div className='lunch'>
+          <div className={styles.lunch}>
             <div>中餐</div>
-            <Scrollbars style={{width:180, height:334,marginTop:2}}>
+            <Scrollbars style={{ width: 180, height: 334, marginTop: 2 }}>
               {
-                (lunch.length >0) ?
+                (lunch.length > 0) ?
                   lunch.map((data, index) => <li key={index}>{data}</li>) : <Empty
                     image={homeToday}
                     description={
@@ -47,11 +47,11 @@ class TodayMenuCard extends Component {
               }
             </Scrollbars>
           </div>
-          <div className='dessert'>
+          <div className={styles.dessert}>
             <div>点心</div>
-            <Scrollbars style={{width:180, height:334,marginTop:2}}>
+            <Scrollbars style={{ width: 180, height: 334, marginTop: 2 }}>
               {
-                (dessert.length >0) ?
+                (dessert.length > 0) ?
                   (dessert.map((data, index) => <li key={index}>{data}</li>)) : (<Empty
                     image={homeToday}
                     description={
@@ -63,11 +63,11 @@ class TodayMenuCard extends Component {
               }
             </Scrollbars>
           </div>
-          <div className='dinner'>
+          <div className={styles.dinner}>
             <div>晚餐</div>
-            <Scrollbars style={{width:180, height:334,marginTop:2}}>
+            <Scrollbars style={{ width: 180, height: 334, marginTop: 2 }}>
               {
-                (dinner.length>0) ?
+                (dinner.length > 0) ?
                   dinner.map((data, index) => <li key={index}>{data}</li>) : <Empty
                     image={homeToday}
                     description={

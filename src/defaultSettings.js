@@ -7,7 +7,7 @@ module.exports = {
     autoHideHeader: false, // auto hide header
     fixSiderbar: false, // sticky siderbar
     menu: {
-        disableLocal: true,
+        disableLocal: false,
     },
     title: '安品餐饮单位',
 };
