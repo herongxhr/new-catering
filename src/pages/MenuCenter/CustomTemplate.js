@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Card, Button, Row, Col, message, Input } from 'antd';
 import { connect } from 'dva';
 import ArrangeDishes from '../../components/ArrangeDishes';
-import styles from './index.module.less';
+import styles from './CustomTemplate.less';
 import { routerRedux } from 'dva/router';
 import BreadcrumbComponent from '../../components/BreadcrumbComponent';
 import EditableTagGroup from '../../components/EditableTagGroup';

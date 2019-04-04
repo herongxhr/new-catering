@@ -4,7 +4,7 @@ import { routerRedux } from 'dva/router';
 import MenuTemplateCard from '../../components/MenuTemplateCard';
 import BreadcrumbWithTabs from '../../components/BreadcrumbWithTabs';
 import { connect } from 'dva';
-import styles from './index.module.less'
+import styles from './MenuTemplate.less'
 import SorterArrow from '../../components/SorterArrow';
 
 const Option = Select.Option;

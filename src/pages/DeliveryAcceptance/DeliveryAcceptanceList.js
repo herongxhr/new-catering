@@ -10,7 +10,7 @@ import { Tabs } from 'antd'
 import Bread from '../../components/Bread'
 import DeliveryTable from './DeliveryTable'
 
-import './index.less'
+import './DeliveryAcceptanceList.less'
 import { denodeify } from 'q';
 
 const TabPane = Tabs.TabPane;

@@ -10,7 +10,7 @@ import { Button, Card, Row, Col, Table, Tag, Modal, Alert, message } from 'antd'
 import DescriptionList from '../../components/DescriptionList';
 import Bread from '../../components/Bread'
 import PageHeadWrapper from '../../components/PageHeaderWrapper';
-import styles from './index.module.less';
+import styles from './PurOrderDetails.less';
 import { routerRedux, Redirect } from 'dva/router';
 import moment from 'moment'
 import { Scrollbars } from 'react-custom-scrollbars';

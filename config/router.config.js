@@ -57,12 +57,12 @@ export default [
                     {
                         // 新建模板
                         path: '/menu-center/menu-template/custom',
-                        component: './MenuCenter/CutomTemplate',
+                        component: './MenuCenter/CustomTemplate',
                     },
                     {
                         // 编辑模板
                         path: '/menu-center/menu-template/update',
-                        component: './MenuCenter/CutomTemplate',
+                        component: './MenuCenter/CustomTemplate',
                     },
                 ],
             },
@@ -71,7 +71,7 @@ export default [
                 path: '/supermarket',
                 name: '辅料超市',
                 icon: 'shopping',
-                component: './Supermarket'
+                component: './Supermarket/Supermarket'
             },
             {
                 // 采购订单

@@ -5,7 +5,7 @@ import { routerRedux } from 'dva/router'
 import DescriptionList from '../../components/DescriptionList';
 import BreadcrumbComponents from '../../components/BreadcrumbComponent';
 import PageHeadWrapper from '../../components/PageHeaderWrapper';
-import styles from './index.module.less';
+import styles from './MenuDetails.less';
 import ShowArrangedDishes from '../../components/ShowArrangedDishes';
 import { getYMD, getYMDHms } from '../../utils/utils';
 

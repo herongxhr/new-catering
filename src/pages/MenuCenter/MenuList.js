@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import Moment from 'moment';
 import { Card, Table, Badge } from 'antd';
-import styles from './index.module.less';
+import styles from './MenuList.less';
 import BreadcrumbWithTabs from '../../components/BreadcrumbWithTabs';
 import CommonFilter from '../../components/CommonFilter';
 import { getYMD } from '../../utils/utils';

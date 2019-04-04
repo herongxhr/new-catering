@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Input, Icon, Badge, Pagination, } from 'antd';
-import CartPage from '../CartPage';
+import CartPage from './CartPage';
 import GoodsFilter from '../../components/GoodsFilter';
 import FGoodList from '../../components/FGoodList';
-import './index.less';
+import './Supermarket.less';
 
 const { Search } = Input;
 

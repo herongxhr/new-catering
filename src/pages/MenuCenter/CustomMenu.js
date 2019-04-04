@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Card, DatePicker, Button, Row, Col, message } from 'antd';
 import { connect } from 'dva';
 import ArrangeDishes from '../../components/ArrangeDishes';
-import styles from './index.module.less';
+import styles from './CustomMenu.less';
 import BreadcrumbComponent from '../../components/BreadcrumbComponent';
 import createHistory from 'history/createBrowserHistory';
 import { routerRedux } from 'dva/router';

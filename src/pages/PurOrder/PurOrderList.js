@@ -13,7 +13,7 @@ import DisAcceptTable from '../../components/DisAcceptTable'
 import { withRouter } from 'react-router'
 import { Scrollbars } from 'react-custom-scrollbars';
 import { routerRedux } from 'dva/router';
-import styles from './index.module.less';
+import styles from './PurOrderList.less';
 import moment from 'moment'
 // 定义表格列
 
