@@ -6,6 +6,7 @@ import styles from './CustomMenu.less';
 import BreadcrumbComponent from '../../components/BreadcrumbComponent';
 import createHistory from 'history/createBrowserHistory';
 import { routerRedux } from 'dva/router';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 const history = createHistory();
 const { WeekPicker, } = DatePicker;
@@ -15,20 +16,16 @@ const { WeekPicker, } = DatePicker;
 class CustomMenu extends Component {
   state = {
     id: '',
-    type: 'P',
+    menuType: '',
+    templateType: 'P',
     nd: '',
     week: '',
   }
 
   static getDerivedStateFromProps(props) {
-    const { location } = props;
-    // 只有从模板新建，选择了模板后
-    // location.state才存在，直接自定义菜单是location.state为undefined
-    if (location.state) {
-      const { id = '', type = '' } = location.state;
-      return { id, type }
-    }
-    return null;
+    const { match: { params } } = props;
+    const { id = '', menuType = '', templateType = '' } = params;
+    return { id, menuType, templateType }
   }
 
   // 选择周次回调
@@ -60,10 +57,10 @@ class CustomMenu extends Component {
   // 同时传递后端返回的id和局部state中保存的templateType
   goMenuDetails = data => {
     const { type, id } = this.state;
-    const url = type === 'C' ? 'unified-menu' : 'my-menu';
+    const url = type === 'C' ? 'unified' : 'my';
     this.success();
     this.props.dispatch(routerRedux.push({
-      pathname: `/menubar/${url}/details`,
+      pathname: `/menu-center/${url}/details`,
       state: { id: id || data, type: type }
     }))
   }
@@ -87,30 +84,36 @@ class CustomMenu extends Component {
   }
 
   render() {
-    const { location, loading } = this.props;
-    const isLoading = loading.effects['menuCenter/newMenu'];
+    const { location, isLoading } = this.props;
     return (
       <div>
         <BreadcrumbComponent {...location} />
-        {/* 如果是自定义菜单时显示 */}
-        <Card className={styles.wrap}>
-          <Row>
-            <Col span={8}>适用周次：<WeekPicker
-              ref={ref => this.weekpicker = ref}
-              style={{ width: 260 }}
-              onChange={this.handleSelectWeek}
-              placeholder="选择周次"
-            />
-            </Col>
-          </Row>
-        </Card>
-        <Card
-          className={styles.wrap}
-          style={{ marginBottom: 76 }}
-          bodyStyle={{ padding: 20 }}>
+        <PageHeaderWrapper
+          withTabs={false}
+        >
+          <Card className={styles.wrap}>
+            <Row>
+              <Col span={8}>
+                适用周次：<WeekPicker
+                  ref={ref => this.weekpicker = ref}
+                  style={{ width: 260 }}
+                  onChange={this.handleSelectWeek}
+                  placeholder="选择周次"
+                />
+              </Col>
+            </Row>
+          </Card>
           {/* 排餐控件 */}
-          <ArrangeDishes isMy={true} {...this.props} />
-        </Card>
+          <Card
+            className={styles.wrap}
+            style={{ marginBottom: 76 }}
+            bodyStyle={{ padding: 20 }}>
+            <ArrangeDishes
+              isMy={this.state.menuType !== 'unified'}
+              {...this.props}
+            />
+          </Card>
+        </PageHeaderWrapper>
         {/* 底部按钮 */}
         <div className={styles.footerWrap}>
           <div className={styles.footerBtn}>
@@ -123,12 +126,13 @@ class CustomMenu extends Component {
             >保存</Button>
           </div>
         </div>
+        {/* 如果是自定义菜单时显示 */}
       </div>
     )
   }
 }
 
 export default connect(({ menuCenter, loading }) => ({
-  loading,
+  isLoading: loading.effects['menuCenter/newMenu'],
   ...menuCenter
 }))(CustomMenu);

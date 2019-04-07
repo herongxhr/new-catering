@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import Moment from 'moment';
 import { Card, Table, Badge } from 'antd';
-import styles from './MenuList.less';
+import styles from './Unified.less';
 import BreadcrumbWithTabs from '../../components/BreadcrumbWithTabs';
 import CommonFilter from '../../components/CommonFilter';
 import { getYMD } from '../../utils/utils';
@@ -12,15 +12,15 @@ import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 // breadcrumbWithTabs中tabs数据
 const tabList = [
 	{
-		key: 'unified-menu',
+		key: 'unified',
 		tab: '统一菜单',
 	},
 	{
-		key: 'my-menu',
+		key: 'my',
 		tab: '我的菜单',
 	},
 	{
-		key: 'menu-template',
+		key: 'template',
 		tab: '菜单模板',
 	},
 ];
@@ -45,28 +45,27 @@ class MenuCenter extends React.Component {
 	}
 
 	// 点击tabs标签跳转到指定页面
-	// 页面state中的activeTabKey会传给面包屑
 	handleTabChange = key => {
 		this.props.dispatch(routerRedux.push({
-			pathname: `/menubar/${key}`,
+			pathname: `/menu-center/${key}`,
 		}));
 	}
 
 	// 查看订单详情
 	handleShowDetail = record => {
 		this.props.dispatch(routerRedux.push({
-			pathname: `/menubar/unified-menu/details`,
+			pathname: `/menu-center/unified/details`,
 			state: {
 				id: record.id,
-				type: 'unified-menu'
+				type: 'unified'
 			}
 		}));
 	}
 	// 获取统一菜单列表
-	getMenuData = (params = {}) => {
+	getMenuList = (params = {}) => {
 		this.setState(params);
 		this.props.dispatch({
-			type: 'menuCenter/fetchMenuData',
+			type: 'menuCenter/fetchMenuList',
 			payload: {
 				...this.state,
 				...params
@@ -75,7 +74,7 @@ class MenuCenter extends React.Component {
 	}
 
 	componentDidMount() {
-		this.getMenuData();
+		this.getMenuList();
 	}
 
 	render() {
@@ -150,7 +149,7 @@ class MenuCenter extends React.Component {
 					{...location}
 					tabList={tabList}
 					onChange={this.handleTabChange}
-					activeTabKey={'unified-menu'}
+					activeTabKey={'unified'}
 				/>
 				<PageHeaderWrapper>
 					<Card className={styles.tableList} bordered={false}>

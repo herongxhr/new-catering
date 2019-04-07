@@ -18,25 +18,30 @@ export default [
                 name: 'menucenter',
                 icon: 'bars',
                 routes: [
-                    { path: '/menu-center', redirect: '/menu-center/menu-list'},
+                    { path: '/menu-center', redirect: '/menu-center/unified'},
                     {
-                        // 菜单列表
-                        path: '/menu-center/menu-list',
-                        component: './MenuCenter/MenuList',
+                        // 统一菜单列表
+                        path: '/menu-center/unified',
+                        component: './MenuCenter/Unified',
+                    },
+                    {
+                        // 我的菜单列表
+                        path: '/menu-center/my',
+                        component: './MenuCenter/My',
                     },
                     {
                         // 模板卡片列表
-                        path: '/menu-center/menu-template',
+                        path: '/menu-center/template',
                         component: './MenuCenter/MenuTemplate',
                     },
                     {
                         // 统一菜单详情
-                        path: '/menu-center/unified-menu/details',
+                        path: '/menu-center/unified/details',
                         component: './MenuCenter/MenuDetails',
                     },
                     {
                         // 我的菜单详情
-                        path: '/menu-center/my-menu/details',
+                        path: '/menu-center/my/details',
                         component: './MenuCenter/MenuDetails',
                     },
                     {
@@ -46,22 +51,22 @@ export default [
                     },
                     {
                         // 新建菜单
-                        path: '/menu-center/my-menu/custom',
+                        path: '/menu-center/my/custom',
                         component: './MenuCenter/CustomMenu',
                     },
                     {
                         // 编辑菜单
-                        path: '/menu-center/my-menu/update',
+                        path: '/menu-center/my/update',
                         component: './MenuCenter/CustomMenu',
                     },
                     {
                         // 新建模板
-                        path: '/menu-center/menu-template/custom',
+                        path: '/menu-center/template/custom',
                         component: './MenuCenter/CustomTemplate',
                     },
                     {
                         // 编辑模板
-                        path: '/menu-center/menu-template/update',
+                        path: '/menu-center/template/update',
                         component: './MenuCenter/CustomTemplate',
                     },
                 ],

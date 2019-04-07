@@ -155,14 +155,11 @@ export function queryRule(params) {
 
 //菜单中心专区
 //菜单中心专区
-export function queryMenuData(params) {//获取菜单列表
+export function queryMenuList(params) {//获取菜单列表
     return request({
         method: 'get',
         url: '/catering/camenu/pageQuery',
-        data: {
-            showLoading: true,
-            params: { ...params }
-        }
+        data: { params }
     })
 }
 export function queryMenuDetails(id) {//获取菜单详情
@@ -250,10 +247,7 @@ export function queryDishes(params) {//获取菜品数据
     return request({
         method: 'get',
         url: '/pub/food/pageQuery',
-        data: {
-            showLoading: true,
-            params: { ...params }
-        }
+        data: { params }
     })
 }
 

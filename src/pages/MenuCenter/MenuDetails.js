@@ -45,7 +45,7 @@ class MenuDetails extends React.Component {
   handleArrangeDishes = () => {
     const { id, type } = this.state;
     this.props.dispatch(routerRedux.push({
-      pathname: `/menubar/${type}/adjust`,
+      pathname: `/menu-center/${type}/adjust`,
       state: { id, type }
     }))
   }

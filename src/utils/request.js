@@ -20,7 +20,8 @@ export default async function request(options) {
         ReactDOM.render(<Spin />, document.getElementById('ajaxLoading'));
     }
 
-    let baseApi = 'http://anpin.jgzh.test';
+    // let baseApi = 'http://anpin.jgzh.test';
+    let baseApi = 'https://easy-mock.com/mock/5c6cf43f2ecce005c352d626';
     try {
         const response = await axios({
             method: options.method,

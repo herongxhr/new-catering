@@ -34,7 +34,7 @@ class TemplateDetails extends Component {
     handleEditTemplate = () => {
         const { id } = this.state;
         this.props.dispatch(routerRedux.push({
-            pathname: '/menubar/menu-template/new',
+            pathname: '/menu-center/template/new',
             state: { id, templateType: this.state.templateType }
         }))
     }
@@ -48,7 +48,7 @@ class TemplateDetails extends Component {
         switch (action) {
             case 'update':
                 dispatch(routerRedux.push({
-                    pathname: '/menubar/menu-template/update',
+                    pathname: '/menu-center/template/update',
                     state: { id, templateType }
                 }));
                 return;

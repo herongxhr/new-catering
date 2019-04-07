@@ -1,93 +1,42 @@
 import React from 'react';
-import { FormattedMessage } from 'umi-plugin-react/locale';
-import Link from 'umi/link';
-import { PageHeader, Tabs, Typography } from 'antd';
 import { connect } from 'dva';
-import classNames from 'classnames';
 import GridContent from './GridContent';
 import styles from './index.less';
-import MenuContext from '@/layouts/MenuContext';
-import { conversionBreadcrumbList } from './breadcrumb';
-
-const { Title } = Typography;
-
-/**
- * render Footer tabList
- * In order to be compatible with the old version of the PageHeader
- * basically all the functions are implemented.
- */
-const renderFooter = ({ tabList, activeKeyProps, onTabChange, tabBarExtraContent }) => {
-  return tabList && tabList.length ? (
-    <Tabs
-      className={styles.tabs}
-      {...activeKeyProps}
-      onChange={key => {
-        if (onTabChange) {
-          onTabChange(key);
-        }
-      }}
-      tabBarExtraContent={tabBarExtraContent}
-    >
-      {tabList.map(item => (
-        <Tabs.TabPane tab={item.tab} key={item.key} />
-      ))}
-    </Tabs>
-  ) : null;
-};
 
 const PageHeaderWrapper = ({
   children,
   contentWidth,
-  className,
-  top,
-  title,
-  content,
+  withTabs,
   logo,
+  title,
+  action,
+  content,
   extraContent,
-  ...restProps
 }) => {
   return (
-    <div style={{ margin: '104px -24px 0' }} className={classNames(className, styles.main)}>
-      {top}
+    // 全页面部分
+    <div
+      style={withTabs ? { margin: '104px -24px 0' } : { margin: '1px -24px 0' }}
+      className={styles.container}>
       {title && content && (
-        // 标题和面包屑区域
-        <MenuContext.Consumer>
-          {value => {
-            return (
-              <PageHeader
-                wide={contentWidth === 'Fixed'}
-                title={
-                  <Title
-                    level={4}
-                    style={{ marginBottom: 0, }}
-                  >
-                    {title}
-                  </Title>
-                }
-                key="pageheader"
-                {...restProps}
-                breadcrumb={conversionBreadcrumbList({
-                  ...value,
-                  ...restProps,
-                  home: <FormattedMessage id="menu.home" defaultMessage="Home" />,
-                })}
-                className={styles.pageHeader}
-                linkElement={Link}
-                footer={renderFooter(restProps)}
-              >
-                <div className={styles.detail}>
-                  {logo && <div className={styles.logo}>{logo}</div>}
-                  <div className={styles.main}>
-                    <div className={styles.row}>
-                      {content && <div className={styles.content}>{content}</div>}
-                      {extraContent && <div className={styles.extraContent}>{extraContent}</div>}
-                    </div>
-                  </div>
-                </div>
-              </PageHeader>
-            );
-          }}
-        </MenuContext.Consumer>
+        // 头部区域，中间有无背景色的分隔
+        <div style={{ background: '#fff' }}>
+          {/* 头部居中部分 */}
+          <div
+            className={`${styles.wrap} ${contentWidth === 'Fixed' ? styles.wide : ''}`}>
+            {logo && <div className={styles.logo}>{logo}</div>}
+            <div className={styles.main}>
+              <div className={styles.row}>
+                <h1 className={styles.title}>{title}</h1>
+                {action && <div className={styles.action}>{action}</div>}
+              </div>
+              <div className={styles.row}>
+                {content && <div className={styles.content}>{content}</div>}
+                {extraContent && <div className={styles.extraContent}>{extraContent}</div>}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
       {/* 子内容全放在GridContent中，GridContent根据布局模式固定或流式 */}
       {children ? (

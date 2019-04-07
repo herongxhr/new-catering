@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Select, Input, Table, Tag } from 'antd';
-import { withRouter } from "react-router";
+import { router } from 'umi';
 import styles from './index.module.less';
 
 const { Search } = Input;
@@ -16,6 +16,18 @@ const selectData = [
     ['QT', '其它'],
 ]
 
+/**
+ * 接收以下属性：
+ * 1.isAdd：是否是加菜
+ * 2.visible：modal是否可见
+ * 3.dishesData：菜品数据
+ * 4.zj：周几
+ * 5.mealTimes：餐次
+ * 6.currTDMeals：点击单元格中菜品数据
+ * 7.handleHideModal：隐藏modal的方法
+ * 8.getDishes：定义在父组件中请求菜品数据的方法
+ * 9.changeArrangedMeals：对菜品进行选择/删除/替换的操作
+ */
 class SelectDishes extends React.Component {
     state = {
         type: '',
@@ -24,7 +36,7 @@ class SelectDishes extends React.Component {
         pageSize: 10
     }
     // 点击分类或搜索关键字搜索菜品
-    filterToGetData = params => {
+    filterToGetData = (params = {}) => {
         const { getDishes } = this.props;
         this.setState({ ...params });
         // 发请求
@@ -34,50 +46,42 @@ class SelectDishes extends React.Component {
         });
     }
 
+    // 查看详情
     handlePreviewItem = id => {
-        this.props.history.push({
-            pathname:'/dishDetails',
-            state:{id:id} 
-        })
+        router.push(`/dishDetails/${id}`);
     }
+
     componentDidMount() {
-        this.filterToGetData()
+        this.filterToGetData();
     }
     render() {
         // 弹出框modal表头数据
         const tableColumns = [
             {
                 title: '名称',
-                key: 'foodName',
                 dataIndex: 'foodName'
             },
             {
                 title: '类别',
-                key: 'type',
                 dataIndex: 'type',
                 render: type => {
-                    const typeMap = { HC: '荤菜', BH: '半荤', SC: '素菜', TG: '汤羹', QT: '其他' };
-                    return typeMap[type];
+                    return { HC: '荤菜', BH: '半荤', SC: '素菜', TG: '汤羹', QT: '其他' }[type];
                 }
             },
             {
                 title: '食材明细',
-                key: 'gg',
                 dataIndex: 'gg',
             },
             {
                 title: '图片',
-                key: 'img',
                 dataIndex: 'img',
                 render: (_, record) => (
-                    <a onClick={() => {
-                        this.handlePreviewItem(record.id);
-                    }}>查看</a>
+                    <a onClick={() => { }}>查看</a>
                 )
             },
             {
                 title: '操作',
-                key: 'add',
+                key: 'actions',
                 width: 100,
                 render: (_, record) => {
                     // 判断当前食材或菜品是否已经添加
@@ -114,7 +118,7 @@ class SelectDishes extends React.Component {
                 key={item.foodId}
                 // 判断是不是自己加的菜
                 closable={item.isAdd}
-                onClose={e => {
+                onClose={() => {
                     changeArrangedMeals(item, -1)
                 }} >
                 {item.viewFood.foodName}：{item.viewFood.gg && item.viewFood.gg.substring(0, 14) + '...'}
@@ -155,6 +159,11 @@ class SelectDishes extends React.Component {
                         dataSource={records}
                         onChange={({ current, pageSize }) => this.filterToGetData({ current, pageSize })}
                         rowKey="id"
+                        onRow={record => {
+                            return {
+                                onClick: () => this.handlePreviewItem(record.id),
+                            }
+                        }}
                         pagination={{
                             current: dishesData.current || 1,
                             pageSize: dishesData.size || 10,
@@ -174,5 +183,5 @@ class SelectDishes extends React.Component {
     }
 }
 
-export default withRouter(SelectDishes);
+export default SelectDishes;
 

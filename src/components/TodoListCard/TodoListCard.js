@@ -10,7 +10,7 @@ class TodoListCard extends Component {
       <div className={styles.todoListCard}>
         <div className={styles.title}>待办事项</div>
         <Divider />
-        <div className={styles.item} onClick={() => { this.props.history.push({ pathname: '/menubar', state: { status: '0' } }) }} >
+        <div className={styles.item} onClick={() => { this.props.history.push({ pathname: '/menu-center', state: { status: '0' } }) }} >
           <span>待执行菜单</span><span><Badge count={todoList.notExecutedMenu} style={{ backgroundColor: '#FF9500' }} /></span>
         </div>
         <Divider />

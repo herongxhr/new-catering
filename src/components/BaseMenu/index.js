@@ -19,7 +19,7 @@ const menus = [
 		icon: 'home'
 	},
 	{
-		path: '/menubar',
+		path: '/menu-center',
 		name: '菜单中心',
 		icon: 'bars'
 	},

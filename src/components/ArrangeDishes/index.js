@@ -16,9 +16,13 @@ const addBtn = (<div>
         <Button className={styles.addBtn} type='dashed'>+添加</Button>
     </Dropdown>
 </div>)
-// 组件要接收arrangedMeals数据，
-// 即camenuDetailVOMap和camenuTemplateDetailVOMap
-// 还要接收menuCenter state中周一到周日每天的排餐数据
+
+/**
+ * 主要接收三个属性：
+ * isMy：表示是否是我的菜单，从而决定有没有编辑权限；
+ * dishesData：选菜moda要用到的菜品数据；
+ * allMealsData：排餐表格的菜品数据。
+ */
 export default class ArrangeDishes extends Component {
     state = {
         // 显示选菜/选食材弹出框
@@ -36,34 +40,48 @@ export default class ArrangeDishes extends Component {
     }
 
     // 选菜/选食材弹出框中点击确定或取消的回调
+    // 将state重置
     hideModal = () => {
         this.setState({
-            showModal: false
-        })
-    }
-    // 点击(添加/更换按钮)时弹出(选菜/选食材弹出框)
-    showModal = () => {
-        this.setState({
-            showModal: true
+            showModal: false,
+            zj: '',
+            mealTimes: '',
+            forStaff: false,
+            isAdd: false,
+            currFoodId: ''
         })
     }
 
     /**
-     * 所有事件冒泡到td单元格上，好采集周次rowIndew餐次mealTimes信息
-     * 同时利用state保存当前点击信息；同时控制选菜或选食材modal的显示
-     * 利用forStaff,isAdd,currFoodId保存是否职工餐，是否新加餐，当前操作菜名
+     * 所有事件冒泡到td单元格上，采集周次zj餐次mealTimes信息;
+     * 利用state保存当前点击信息，如：
+     * forStaff是否职工餐,isAdd新加餐,currFoodId当前操作菜名
+     * 同时控制选菜或选食材modal的显示
      */
     handleShowModal = (e, zj, mealTimes) => {
         // 只有添加按钮和两个更换和删除按钮是LI标签
         if (e.target.nodeName !== 'LI') return;
         // 添加按钮本身有id, 更换和删除的id在parentNode上
-        const foodId = e.target.id || e.target.parentNode.id;
-        // 根据e.target.id来判断是职工餐还是自己加的菜
-        let forStaff = foodId === 'forStaff';
-        let isAdd = foodId === 'everyone' || foodId === 'forStaff';
-        // 记录当前点击菜名的id，要考虑点了按钮的情况
-        let currFoodId = (!isAdd && foodId) || '';
-        const flag = e.target.getAttribute('flag') || null;
+        const nodeId = e.target.id || e.target.parentNode.id;
+        let currFoodId, isAdd, forStaff;
+        switch (nodeId) {
+            case 'forStaff':
+                currFoodId = '';
+                isAdd = true;
+                forStaff = true;
+                break;
+            case 'everyone':
+                currFoodId = '';
+                isAdd = true;
+                forStaff = false;
+                break;
+            default:
+                currFoodId = nodeId;
+                isAdd = false;
+                forStaff = false;
+        }
+        // 只有删除有flag, 只有删除要操作，其它都是显示modal
+        const flag = e.target.getAttribute('flag');
         this.setState({
             mealTimes,
             zj,
@@ -76,7 +94,9 @@ export default class ArrangeDishes extends Component {
                 this.changeArrangedMeals({ id: this.state.currFoodId }, -1);
                 return;
             }
-            this.showModal();
+            this.setState({
+                showModal: true
+            })
         })
     }
 
@@ -84,21 +104,24 @@ export default class ArrangeDishes extends Component {
     // flag为1为添加，-1时为删除，0为替换
     // 使用state中的zj和mealTimes定位单元格
     changeArrangedMeals = (record, flag) => {
-        const { isAdd } = this.state;
+        // 每次换菜时先将id设为currFoodId
+        if (flag === 0) {
+            this.setState({
+                currFoodId: record.id
+            })
+        }
         this.props.dispatch({
             type: 'menuCenter/changeArrangedMeals',
             payload: {
                 record,
                 ...this.state,
                 flag
-            }
-        });
-        // 当换过一次菜后，将之前所换菜的id设为currFoodId
-        if (!isAdd) {
-            this.setState({
-                currFoodId: record.id
-            })
-        }
+            },
+        })
+        // 删除后currFoodId为''
+        if (flag === -1) {
+            this.setState({ currFoodId: '' })
+        };
     };
 
     // 选菜或选食材中筛选区域
@@ -142,7 +165,7 @@ export default class ArrangeDishes extends Component {
         const weekdaysName = ['一', '二', '三', '四', '五', '六', '日'];
         const mealsName = ['ZD', 'ZC', 'DX', 'WC'];//早点，中餐，点心，晚餐
         const { allMealsData } = this.props;
-        // 按周几排列菜品数据
+        // 按周几排列菜品数据,空数组[]执行函数后为空对象{}
         const mealsSortedByWeekday = sortMealsData(allMealsData, 'zj');
         // 再把其中一天的数据按餐次进行排序
         const oneDayMealsSorted = mealsSortedByWeekday[weekday] != null
@@ -200,6 +223,7 @@ export default class ArrangeDishes extends Component {
             </ul>)
         }
     }
+
     render() {
         const {
             className,

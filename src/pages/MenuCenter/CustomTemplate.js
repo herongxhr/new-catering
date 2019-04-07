@@ -68,7 +68,7 @@ class CustomTemplate extends Component {
   goTemplateDetails = () => {
     this.success();
     this.props.dispatch(routerRedux.push({
-      pathname: '/menubar/menu-template/details',
+      pathname: '/menu-center/template/details',
       state: { ...this.state }
     }));
   }

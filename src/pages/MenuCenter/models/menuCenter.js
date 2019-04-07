@@ -1,6 +1,6 @@
 import {
     queryDishes,
-    queryMenuData,
+    queryMenuList,
     queryMenuDetails,
     toUpdateMenu,
     toDeleteMyMenu,
@@ -50,8 +50,8 @@ export default {
     },
     effects: {
         // 获取菜单列表,统一接口
-        *fetchMenuData({ payload }, { call, put }) {
-            const data = yield call(queryMenuData, payload);
+        *fetchMenuList({ payload }, { call, put }) {
+            const data = yield call(queryMenuList, payload);
             yield put({
                 type: 'saveMenuList',
                 payload: data || {}
@@ -198,7 +198,7 @@ export default {
         saveMenuList(state, { payload }) {
             return {
                 ...state,
-                menuList: payload
+                menuList: payload || {}
             }
         },
         // 保存菜单详情
@@ -324,10 +324,8 @@ export default {
             const {
                 record, mealTimes, zj, forStaff, isAdd, currFoodId, flag
             } = payload;
-            // const mealsByWeekday = sortMealsData(allMealsData, 'zj');
-            // const oneDayMeals = zj && mealsByWeekday[zj] || {};
-            // const oneDayMealsSortByName = mealTimes && sortMealsData(oneDayMeals, 'mealTimes') || {}
-            // const isExist = oneDayMealsSortByName[mealTimes].some(meal => meal.foodId === currFoodId);
+            // allMealsData中与当前currFoodId相同的项，用于换菜
+            const existFood = state.allMealsData.find(item => item.foodId === currFoodId) || {};
             switch (flag) {
                 // 增加
                 case 1:
@@ -355,28 +353,25 @@ export default {
                 case 0:
                     return {
                         ...state,
-                        allMealsData: state.allMealsData
-                            .map(meal => {
-                                if (meal.foodId === currFoodId) {
-                                    return {
-                                        sort: meal.sort,
-                                        foodId: record.id,
-                                        viewFood: {
-                                            foodName: record.foodName,
-                                            gg: record.gg
-                                        },
-                                        forStaff,
-                                        mealTimes,
-                                        zj,
-                                        isAdd
-                                    }
+                        allMealsData: state.allMealsData.map(item => {
+                            if (item.foodId === currFoodId) {
+                                return {
+                                    foodId: record.id,
+                                    viewFood: {
+                                        foodName: record.foodName,
+                                        gg: record.gg
+                                    },
+                                    forStaff,
+                                    mealTimes,
+                                    zj,
+                                    isAdd,
                                 }
-                                return meal;
-                            })
-
-                    };
+                            }
+                            return item;
+                        })
+                    }
                 default:
-                    return null;
+                    break;
             }
         }
     }

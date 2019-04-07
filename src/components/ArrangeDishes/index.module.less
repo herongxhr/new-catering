@@ -1,95 +1,118 @@
-.arrangeDishes{
-    .arrangeDisthTable{
-        width: 1120px;
+.arrangeDishes {
+    :global(ul) {
+        padding-inline-start: 0px;
+    }
+
+    .arrangeDisthTable {
+        width : 1120px;
         margin: 0 auto;
+
         th {
             text-align: center;
-            width: 260px;
-            height:54px;  
-            padding:18px;
-            background: rgba(245,245,245,1);
+            width     : 260px;
+            height    : 54px;
+            padding   : 18px;
+            background: rgba(245, 245, 245, 1);
         }
+
         th:first-of-type {
-            width: 80px; 
+            width: 80px;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #e8e8e8;
         }
+
         tr {
             td:first-of-type {
-                text-align: center;
+                text-align    : center;
                 vertical-align: middle;
             }
+
             td {
-                text-align: center;
+                text-align    : center;
                 vertical-align: top;
-                height: 60px;
-                padding: 0;
+                height        : 60px;
+                padding       : 0;
             }
         }
-        tr:nth-child(even){
-            background: rgba(250,250,250,1);
+
+        tr:nth-child(even) {
+            background: rgba(250, 250, 250, 1);
         }
-        td {  
+
+        td {
             li {
-                overflow: hidden;
-                position: relative;
-                width: 262px;
-                height: 60px;
-                line-height: 60px;
-                text-align: left;
+                overflow      : hidden;
+                position      : relative;
+                width         : 262px;
+                height        : 60px;
+                line-height   : 60px;
+                text-align    : left;
                 vertical-align: middle;
-                border-bottom: 1px solid #e8e8e8;
-                padding-left: 20px;
-                white-space: nowrap;
+                border-bottom : 1px solid #e8e8e8;
+                padding-left  : 20px;
+                white-space   : nowrap;
+
                 .tag {
-                    position: absolute;
-                    right: 10px;
+                    position  : absolute;
+                    right     : 10px;
                     margin-top: 20px;
                 }
             }
+
             .actionsWrap {
-                position: absolute;
-                top: 0;
-                left:20px;
+                position   : absolute;
+                top        : 0;
+                left       : 20px;
                 border-left: 242px solid transparent;
-                transition: all 0.2s linear;
-                &:hover{
+                transition : all 0.2s linear;
+
+                &:hover {
                     border-left: 82px solid transparent;
                 }
-                .changeBtn,.deleteBtn {
-                    display: inline-block;
-                    cursor: pointer;
-                    color: #fff;
+
+                .changeBtn,
+                .deleteBtn {
+                    display   : inline-block;
+                    cursor    : pointer;
+                    color     : #fff;
                     text-align: center;
-                    width: 80px;
-                    padding: 0;
-                    background:rgb(224, 127, 132, 1) ;
+                    width     : 80px;
+                    padding   : 0;
+                    background: rgb(224, 127, 132, 1);
                 }
+
                 .changeBtn {
                     background: green;
                 }
+
                 .onlyChange {
                     margin-left: 80px;
                 }
             }
         }
+
         .addBtn {
             margin: 10px auto;
             cursor: default;
-            width: 230px;
+            width : 230px;
             border: 1px dashed rgba(84, 196, 206, 1);
         }
+
         .dishImg {
-            width: 90px;
-            height: 90px;
+            width   : 90px;
+            height  : 90px;
             overflow: hidden;
+
             img {
                 width: 90px;
             }
         }
+
         .isAdd {
-            background: rgba(254, 246, 233, 1) ;
+            background: rgba(254, 246, 233, 1);
         }
     }
 }

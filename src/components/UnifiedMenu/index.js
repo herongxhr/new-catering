@@ -96,7 +96,7 @@ class UnifiedMenu extends React.Component {
         <Table columns={tab1Columns} dataSource={DataSource} rowKey="id" style={{ padding: '0px 25px' }} onRow={(record) => {
           return {
             onClick: (event) => {
-              this.props.history.push('/menubar/public/details')
+              this.props.history.push('/menu-center/public/details')
             }
           }
         }} />

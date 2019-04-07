@@ -15,21 +15,21 @@ const RadioButton = Radio.Button;
 // breadcrumbWithTabs中tabs数据
 const tabList = [
   {
-    key: 'unified-menu',
+    key: 'unified',
     tab: '统一菜单',
   },
   {
-    key: 'my-menu',
+    key: 'my',
     tab: '我的菜单',
   },
   {
-    key: 'menu-template',
+    key: 'template',
     tab: '菜单模板',
   },
 ];
 class MenuTemplate extends React.Component {
   state = {
-    activeTabKey: 'menu-template',
+    activeTabKey: 'template',
     // 当前操作的模板
     currTemplateId: '',
     templateType: 'P',
@@ -46,7 +46,7 @@ class MenuTemplate extends React.Component {
   // 页面state中的activeTabKey会传给面包屑
   handleTabChange = key => {
     this.props.dispatch(routerRedux.push({
-      pathname: `/menubar/${key}`,
+      pathname: `/menu-center/${key}`,
     }));
   }
 
@@ -71,13 +71,13 @@ class MenuTemplate extends React.Component {
       case 'view':
       case 'preview':
         dispatch(routerRedux.push({
-          pathname: '/menubar/menu-template/details',
+          pathname: '/menu-center/template/details',
           state: { id, templateType: this.state.templateType }
         }))
         return;
       case 'update':
         dispatch(routerRedux.push({
-          pathname: '/menubar/menu-template/update',
+          pathname: '/menu-center/template/update',
           state: { id, templateType: this.state.templateType }
         }));
         return;
@@ -108,7 +108,7 @@ class MenuTemplate extends React.Component {
       type: 'menuCenter/clearTemplateDetails'
     })
     dispatch(routerRedux.push({
-      pathname: `/menubar/menu-template/new`,
+      pathname: `/menu-center/template/new`,
       state: { templateType: 'P' }
     }))
   }
