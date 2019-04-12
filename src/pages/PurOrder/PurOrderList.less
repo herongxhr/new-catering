@@ -1,35 +1,44 @@
+.wrap {
+  margin-top: 0px;
+}
 
-  .orderWrapper {
-    margin: 20px auto;
-    padding: 20px 30px;
-    width: 1160px;
-    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
-    background-color: rgba(255, 255, 255, 1);
-  }
-  .acceptance {
-    color: #54C4CE;
-    cursor: pointer;
-  }
-.orderModal{
-  :global{
+.orderWrapper {
+  margin          : 20px auto;
+  padding         : 20px 30px;
+  width           : 1160px;
+  box-shadow      : 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.acceptance {
+  color : #54C4CE;
+  cursor: pointer;
+}
+
+.orderModal {
+  :global {
     .ant-modal-header {
-      border-bottom: none; 
-      padding: 26px 30px;
-      color: rgba(0, 0, 0, 1);
+      border-bottom: none;
+      padding      : 26px 30px;
+      color        : rgba(0, 0, 0, 1);
     }
+
     .ant-modal-footer {
       border-top: none;
-      padding: 20px;
+      padding   : 20px;
     }
+
     .ant-modal-content {
-        height: 628px;
+      height: 628px;
     }
-    .ant-modal-content .ant-modal-body{
-      height: 486px;
-      padding:0 10px;
+
+    .ant-modal-content .ant-modal-body {
+      height : 486px;
+      padding: 0 10px;
     }
+
     .ant-table-placeholder {
       border-bottom: none;
-  }
+    }
   }
 }

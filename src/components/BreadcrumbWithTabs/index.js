@@ -30,7 +30,9 @@ export default class BreadcrumbWithTabs extends React.Component {
                     });
                     return (
                         <div style={{
-                            margin: '-24px -24px 0', zIndex: 999
+                            position: 'fixed',
+                            top: 70,
+                            zIndex: 9999
                         }}
                             className={styles.wrap}>
                             <div className={styles.centerLayout}>

@@ -27,9 +27,11 @@ export default {
     '/menu-center/template/': '详情',
     '/menu-center/template/new/': '详情',
     '/accSupermarket/': '辅料超市',
-    '/purOrder/': '采购订单',
+    //采购订单
+    '/pur-order': '采购订单',
+    '/pur-order/list': '列表',
     '/purOrder/new/': '新建订单',
-    '/purOrder/details/': '详情',
+    '/pur-order/details': '详情',
     '/delivery/': '配送验收',
     '/parameter/': '台帐',
     '/parameter/purcatalog/': '采购目录',

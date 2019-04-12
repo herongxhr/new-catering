@@ -1,6 +1,8 @@
-import { queryModalSelect, queryOrderForm, putOrderForm, queryOrderSelectf, 
-    queryOrderTable, queryOrderDetails, 
-    queryOrderPlace, queryDeleteByIds, mallPreOrder, camenuPreOrder } from '../services/api';
+import {
+    queryModalSelect, queryOrderForm, putOrderForm, queryOrderSelectf,
+    queryPurOrderList, queryOrderDetails,
+    toYieldOrder, queryDeleteByIds, mallPreOrder, camenuPreOrder
+} from '../../../services/api';
 
 export default {
     namespace: 'purOrder',
@@ -13,13 +15,14 @@ export default {
         modalSelect: [],
         orderTableForm: [], //采购订单表单列表
         alertPrice: false,
-        orderPlace:'',
-        orderDelete:''
+        orderPlace: '',
+        orderDelete: ''
     },
     effects: {
         *camenuPreOrder({ payload }, { call, put }) {
             const data = yield call(camenuPreOrder, payload);
-            for(let i = 0; i < data.length; i++) {
+
+            for (let i = 0; i < data.length; i++) {
                 data[i].goodsName = data[i].viewSku ? data[i].viewSku.wholeName : null
                 data[i].skuId = data[i].viewSku ? data[i].viewSku.id : null
                 data[i].id = data[i].viewSku ? data[i].viewSku.id : null
@@ -32,10 +35,10 @@ export default {
         },
         *mallPreOrder({ payload }, { call, put }) {
             const data = yield call(mallPreOrder, payload);
-            for(let i = 0; i < data.length; i++) {
+            for (let i = 0; i < data.length; i++) {
                 data[i].goodsName = data[i].viewSku ? data[i].viewSku.wholeName : null
                 data[i].skuId = data[i].viewSku ? data[i].viewSku.id : null
-                data[i].id =  data[i].viewSku ? data[i].viewSku.id : null
+                data[i].id = data[i].viewSku ? data[i].viewSku.id : null
                 data[i].supplierId = data[i].supplier ? data[i].supplier.supplierName : null
             }
             yield put({
@@ -65,8 +68,8 @@ export default {
                 }
             }
         },
-        *queryOrderTable({ payload }, { call, put }) {
-            const data = yield call(queryOrderTable, payload);
+        *fetchPurOrderList({ payload }, { call, put }) {
+            const data = yield call(queryPurOrderList, payload);
             //console.log(data)
             yield put({
                 type: 'savePurOrderTable',
@@ -76,49 +79,36 @@ export default {
         *judgeDetailsOrderForm({ payload }, { call, put }) {
             const data = yield call(queryOrderDetails, payload);
             const { orderDetailVos } = data
-            for(let i = 0; i < orderDetailVos.length; i++) {
+            for (let i = 0; i < orderDetailVos.length; i++) {
                 orderDetailVos[i].goodsName = orderDetailVos[i].viewSku.wholeName
                 orderDetailVos[i].skuId = orderDetailVos[i].viewSku.id
                 orderDetailVos[i].supplierId = orderDetailVos[i].supplier.supplierName
                 orderDetailVos[i].id = orderDetailVos[i].viewSku.id
-                orderDetailVos[i].editable = true
             }
             yield put({
                 type: 'saveMallPreOrder',
                 payload: orderDetailVos || {},
             })
-        },        
+        },
         *getOrderDetails({ payload }, { call, put }) {
             const data = yield call(queryOrderDetails, payload);
-            console.log(data)
             yield put({
                 type: 'savePurOrderDetails',
                 payload: data || {},
             })
         },
         *queryOrderForm({ payload }, { call, put }) {
-            const { id , callback } = payload
-            if(id) {
+            const { id, callback } = payload
+            if (id) {
                 const data = yield call(putOrderForm, payload);
-                callback(data)     
+                callback(data)
             } else {
                 const data = yield call(queryOrderForm, payload);
-                callback(data) 
+                callback(data)
             }
         },
-        *queryOrderPlace({ payload }, { call, put }) {
-            const { callback , id } = payload
-            const data = yield call(queryOrderPlace, id);
-            callback(data)
-            yield put({
-                type: 'saveOrderPlace',
-                payload: data,
-            })
-            if(data){
-                yield put({
-                    type: 'queryOrderTable',
-                })
-            }
+        *yieldOrder({ payload }, { call }) {
+            yield call(toYieldOrder, payload);
         },
         *queryDeleteByIds({ payload }, { call, put }) {
             const data = yield call(queryDeleteByIds, payload);
@@ -126,7 +116,7 @@ export default {
                 type: 'saveDeleteByIds',
                 payload: data,
             })
-            if(data){
+            if (data) {
                 yield put({
                     type: 'queryOrderTable',
                 })
@@ -139,7 +129,7 @@ export default {
                 ...state,
                 orderTableForm: []
             }
-        },            
+        },
         saveMallPreOrder(state, { payload }) {
             return {
                 ...state,
@@ -200,7 +190,7 @@ export default {
         savePurOrderDetails(state, { payload }) {
             return {
                 ...state,
-                orderDetails: payload,
+                orderDetails: payload || {},
             }
         },
         saveOrderPlace(state, { payload }) {

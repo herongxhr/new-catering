@@ -1,58 +1,40 @@
 @import '~antd/lib/style/themes/default.less';
 
-.headerList {
-  margin-bottom: 4px;
-}
-.tableCard {
-  :global {
-    .ant-card-head {
-      padding: 0 16px;
+.wrap {
+  height: 100vh;
+  .headerList {
+    margin-bottom: 5px;
+  }
+
+  .heading {
+    color    : @heading-color;
+    font-size: 20px;
+  }
+
+  .textSecondary {
+    color: @text-color-secondary;
+  }
+
+  .cardTitle {
+    font-size: 16px;
+  }
+
+  .body {
+    background: #fff;
+    height: 100%;
+    padding: 0 30px 10px;
+    .title {
+      height: 70px;
+      line-height: 70px;
+      font-size: 16px;
+      font-weight: bolder;
     }
   }
-}
 
-.noData {
-  color: @disabled-color;
-  font-size: 16px;
-  line-height: 64px;
-  text-align: center;
-  i {
-    position: relative;
-    top: 3px;
-    margin-right: 16px;
-    font-size: 24px;
-  }
-}
 
-.heading {
-  color: @heading-color;
-  font-size: 20px;
-}
-
-.stepDescription {
-  position: relative;
-  left: 38px;
-  padding-top: 8px;
-  font-size: 14px;
-  text-align: left;
-
-  > div {
-    margin-top: 8px;
-    margin-bottom: 4px;
-  }
-}
-
-.textSecondary {
-  color: @text-color-secondary;
-}
-.ant-card-head{
-  margin:0 30px;
-}
-.cardTitle{
-  font-size: 16px;
-}
-@media screen and (max-width: @screen-sm) {
-  .stepDescription {
-    left: 8px;
+  @media screen and (max-width: @screen-sm) {
+    .stepDescription {
+      left: 8px;
+    }
   }
 }

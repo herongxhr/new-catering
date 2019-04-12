@@ -1,156 +1,131 @@
-/*
- * @Author: suwei 
- * @Date: 2019-03-21 17:55:51 
- * @Last Modified by: suwei
- * @Last Modified time: 2019-03-30 15:34:52
- */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'dva';
-import { Table, Tag, Menu, Button, Radio, Badge, Divider, Dropdown, Icon, Modal, Popconfirm, message } from 'antd';
+import { Table, Tag, Button, Badge, Divider, Modal, Popconfirm, message } from 'antd';
 import WrappedOrderFilter from '../../components/OrderFilter';
 import BreadcrumbComponent from '../../components/BreadcrumbComponent';
 import DisAcceptTable from '../../components/DisAcceptTable'
-import { withRouter } from 'react-router'
-import { Scrollbars } from 'react-custom-scrollbars';
 import { routerRedux } from 'dva/router';
 import styles from './PurOrderList.less';
 import moment from 'moment'
+import PageHeaderWrapper from '../../components/PageHeaderWrapper';
 // 定义表格列
 
-class PurOrder extends React.Component {
+class PurOrderList extends React.Component {
 	state = {
 		current: 1,
 		pageSize: 10,
+		startDate: '',
+		endDate: '',
 		channel: '',
 		keywords: '',
 		status: '',
-		startDate: '',
-		endDate: '',
 		orderByField: '',
 		isAsc: '',
 		visible: false
 	}
 
+	static getDerivedStateFromProps(props) {
+		const { location: { state = {} } } = props;
+		// 根据传递过来的key值，让status处于相应的状态
+		return { status: state.key }
+	}
+
 	// 请求采购订单表格数据
-	changeToGetData = (params = {}) => {
-		this.setState({
-			...params
-		})
+	getPurOrderList = (params = {}) => {
+		this.setState(params);
 		this.props.dispatch({
-			type: 'purOrder/queryOrderTable',
+			type: 'purOrder/fetchPurOrderList',
 			payload: {
 				...this.state,
 				...params
 			},
 		})
 	}
-	
-	queryDelivery = (params = {}) => {
-		const { dispatch } = this.props;
-		dispatch({
-			type: 'deliveryAcce/queryDelivery',
-			payload: {
-				...params
-			}
-		})
+
+	componentDidMount() {
+		this.getPurOrderList();
 	}
 
-	//新建按钮跳转
-	handleLinkChange = (pathname, type) => {
-		let channel = 'N'
-		const { props } = this
-		props.dispatch(routerRedux.push({
-			pathname,
-			state: { type , channel }
-		}))
-	}
-	//下单
-	previewOrder = (e,record) => {
+	// 列表项操作：新建/查看/删除/下单/查看验收单
+	handleListItemActions = (action, record) => {
 		const { dispatch } = this.props;
-		const payload = {}
-		payload.callback = (params) => {
-			if(params) {
-				this.TableLinkChange('/purOrder/details',record)
-			} else {
-				message.error('下单失败')		
-			}
+		const actionId = action.id || action;
+		switch (actionId) {
+			case 'FOrder':// 新建
+			case 'SOrder':
+				this.props.dispatch(routerRedux.push({
+					pathname: '/purOrder/adjust',
+					state: { type: actionId, channel: 'N' }
+				}))
+				break;
+			case 'preview':// 查看
+				dispatch(routerRedux.push({
+					pathname: '/pur-order/details',
+					state: { id: record.id }
+				}));
+				break;
+			case 'delete':// 删除
+				dispatch({
+					type: 'purOrder/queryDeleteByIds',
+					payload: {
+						ids: [record.id]
+					},
+				}).then(this.success).then(this.getPurOrderList);
+				break;
+			case 'order':// 下单
+				dispatch({
+					type: 'purOrder/yieldOrder',
+					payload: record.id
+				}).then(this.success).then(() => this.redirectToPurOrderDetails(record))
+				break;
+			case 'showModal':// 查看配送
+				this.setState({
+					visible: true,
+				});
+				dispatch({
+					type: 'deliveryAcce/queryDelivery',
+					payload: record.orderNo
+				})
+				break;
+			default:
+				break;
 		}
-		payload.id = record.id
-		dispatch({
-			type: 'purOrder/queryOrderPlace',
-			payload: payload
-		})
 	}
-	
-	orderDelete = (e,id) => {
-		const { dispatch } = this.props;
-		dispatch({
-			type: 'purOrder/queryDeleteByIds',
-			payload: {
-				ids: [id]
-			},
-		})
-	}
-	//表格点击行跳转
-	TableLinkChange = (pathname, record) => {
+
+	// 下单后跳转
+	redirectToPurOrderDetails = record => {
 		this.props.dispatch(routerRedux.push({
-			pathname,
+			pathname: '/purOrder/details',
 			state: { id: record.id }
 		}))
 	}
 
-	//表格 current 跳转
-	handleTableChange = pagination => {
-		const { current, pageSize } = pagination;
-		// 先改变state
-		this.setState({ current, pageSize });
-		// 发请求
-		this.changeToGetData({
-			...this.state,
-			current,
-			pageSize
-		})
-	}
-
-	showDistributionModal = (orderNo, e) => {
-		e.stopPropagation()
-		this.setState({
-			visible: true,
-		});
-		this.queryDelivery({
-			orderNo: orderNo
-		})
-	}
-
 	//modal展示
-	handleOk = (e) => {
+	handleOk = () => {
 		this.setState({
 			visible: false,
 		});
 	}
-
-	componentDidMount() {
-		this.changeToGetData();
+	success = () => {
+		message.success('操作成功')
 	}
 
-	render() {
-		const {
-			className,
-			location,
-			orderTable,
-		} = this.props;
 
+	render() {
 		const tabColumns = [
 			{
 				title: '采购单号',
-				key: 'orderNo',
+				width: 100,
 				dataIndex: 'orderNo',
 				filterMultiple: true,
+				render: (text, record) => (<a
+					onClick={() => this.handleListItemActions('preview', record)}>
+					{text}</a>)
 			},
 			{
 				title: '订单来源',
-				key: 'channel',
 				dataIndex: 'channel',
+				width: 60,
 				render: (channel) => {
 					switch (channel) {
 						case 'N':
@@ -166,6 +141,7 @@ class PurOrder extends React.Component {
 			},
 			{
 				title: '创建日期',
+				width: 120,
 				key: 'createTime',
 				dataIndex: 'createTime',
 				render: (text) => {
@@ -179,6 +155,7 @@ class PurOrder extends React.Component {
 			},
 			{
 				title: '状态',
+				width: 100,
 				key: 'status',
 				dataIndex: 'status',
 				render: (status) => {
@@ -189,111 +166,78 @@ class PurOrder extends React.Component {
 			},
 			{
 				title: '操作',
-				render: (text, record) => {
-					return record.status === "0" ?
-						(<div className='opertion' onClick={(e) => {e.stopPropagation()}}>
-							<Popconfirm title="确定继续此操作?" onConfirm={(e) => this.previewOrder(e, record)}>
+				width: 120,
+				render: (_, record) => {
+					const status = record.status || '';
+					if (status === '0') {
+						return (<div>
+							<Popconfirm title="确定下单吗?" onClick={e => { e.stopPropagation() }}
+								onConfirm={() => this.handleListItemActions('order', record)}>
 								<a className='orders'>下单</a>
 							</Popconfirm>
-							<Divider type="vertical" onClick={(e) => {e.stopPropagation()}}/>
-							<Popconfirm title="确定继续此操作?" onConfirm={(e) =>this.orderDelete(e, record)}>
-								<a className='delete'>删除</a>
+							<Divider type="vertical" />
+							<Popconfirm title="确定要删除吗?" onClick={e => { e.stopPropagation() }}
+								onConfirm={() => this.handleListItemActions('delete', record)}>
+								<a>删除</a>
 							</Popconfirm>
-						</div>) :
-						(<a className={styles.acceptance} onClick={this.showDistributionModal.bind(this, record.orderNo)}>配送验收情况</a>)
+						</div>)
+					}
+					if (status === '1') {
+						return <a
+							onClick={() => this.handleListItemActions('showModal', record)}
+						>配送验收情况</a>
+					}
 				},
 			}
 		];
-		// 点击新建时会下拉的按钮
-		const dropdownBtn = () => {
-			const pathname = '/purOrder/detail/adjust'
-			const menu = (
-				<Menu>
-					<Menu.Item key="FOrder" onClick={() => this.handleLinkChange(pathname, 'S')}>食材订单</Menu.Item>
-					<Menu.Item key="SOrder" onClick={() => this.handleLinkChange(pathname, 'F')}>辅料订单</Menu.Item>
-				</Menu>
-			)
-			return (
-				<span>
-					<Dropdown overlay={menu}>
-						<Button type="primary">
-							<Icon type="plus" />新建<Icon type="down" />
-						</Button>
-					</Dropdown>
-				</span>
-			)
-		}
-		// 表格数据
-		const current = orderTable.current || 1;
-		const total = orderTable.total || 0;
+		const { location, orderTable, isLoading, delivery } = this.props;
 		const records = orderTable.records || [];
-		const { delivery = {} } = this.props
 		const deliveryRecords = delivery.records || []
 		return (
-			<div className={className}>
+			<Fragment>
 				{/* 面包屑 */}
-				<BreadcrumbComponent {...location} />
-				<div className={styles.orderWrapper}>
+				<BreadcrumbComponent {...location} hidden={true} />
+				<PageHeaderWrapper withTabs={false}>
 					{/* 排序筛选部分 */}
 					<WrappedOrderFilter
-						handleFilter={this.changeToGetData}
-						className="wrappedOrderForm" />
-					<div className="buttonsWrapper">
-						{/* 新建及按钮组部分 */}
-						{dropdownBtn()}
-						<span>
-							<Radio.Group defaultValue="" onChange={e => {
-								this.changeToGetData({
-									status: e.target.value
-								})
-							}} >
-								<Radio.Button value="">全部</Radio.Button>
-								<Radio.Button value="0">未下单</Radio.Button>
-								<Radio.Button value="1">已下单</Radio.Button>
-							</Radio.Group>
-						</span>
-					</div>
-					<div style={{ marginTop: 30 }}>
-						<Table
-							columns={tabColumns}
-							dataSource={records}
-							pagination={{ total, current }}
-							onChange={this.handleTableChange}
-							rowKey="id"
-							onRow={ record => {
-								return {
-									onClick: () => {
-										this.TableLinkChange('/purOrder/details', record)
-									}
-								}
-							}}
-						/>
-					</div>
-				</div>
-				<Scrollbars style={{ width: 1060, height: 628 }}>
+						handleFilter={this.getPurOrderList}
+						handleCustomOrder={this.handleListItemActions}
+						className="wrappedOrderForm"
+						defaultStatus={this.state.status}
+					/>
+					<Table
+						columns={tabColumns}
+						dataSource={records}
+						pagination={{
+							current: orderTable.current || 1,
+							pageSize: orderTable.size || 10,
+							total: orderTable.total || 0,
+						}}
+						onChange={({ current, size }) => this.getPurOrderList({ current, size })}
+						rowKey="id"
+						loading={isLoading}
+					/>
 					<Modal title="配送验收情况"
 						className={styles.orderModal}
 						visible={this.state.visible}
-						onOk={this.handleOk}
-						//onCancel={this.handleCancel}
+						bodyStyle={{ height: 485 }}
 						closable={false}
 						width={1060}
 						maskStyle={{ background: 'rgba(0,0,0,0.25)' }}
 						footer={[
-							<Button key="submit" type="primary" onClick={this.handleOk}>
-								关闭
-							</Button>,
+							<Button type="primary" onClick={this.handleOk}>关闭</Button>
 						]}
 					>
 						<DisAcceptTable records={deliveryRecords} />
 					</Modal>
-				</Scrollbars>
-			</div>
+				</PageHeaderWrapper>
+			</Fragment>
 		)
 	}
 }
 
-export default connect(({ purOrder, deliveryAcce }) => ({
+export default connect(({ purOrder, deliveryAcce, loading }) => ({
 	orderTable: purOrder.orderTable,
 	delivery: deliveryAcce.delivery,
-}))(withRouter(PurOrder))
+	isLoading: loading.effects['purOrder/fetchPurOrderList']
+}))(PurOrderList)

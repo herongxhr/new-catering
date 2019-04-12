@@ -166,9 +166,6 @@ export function queryMenuDetails(id) {//获取菜单详情
     return request({
         method: 'get',
         url: `/catering/camenu/${id}`,
-        data: {
-            showLoading: true,
-        }
     })
 }
 export function queryPMenuTemplate(params) {//餐饮单位模板
@@ -215,7 +212,7 @@ export function queryCTemplateDetails(templateId) {//查看模板
 export function toUpdateMenu(params) {//修改菜单数据
     const id = params.id || '';
     return request({
-        method: 'post',
+        method: 'put',
         url: `/catering/camenu/${id}`,
         headers: { 'Content-Type': 'application/json' },
         data: {
@@ -247,7 +244,10 @@ export function queryDishes(params) {//获取菜品数据
     return request({
         method: 'get',
         url: '/pub/food/pageQuery',
-        data: { params }
+        data: {
+            showLoading: true,
+            params: { ...params }
+        }
     })
 }
 
@@ -406,14 +406,11 @@ export function queryOrderSelectf(params) {
     })
 }
 
-export function queryOrderTable(params) {
+export function queryPurOrderList(params) {
     return request({
         method: 'get',
         url: '/catering/order/pageQuery',
-        data: {
-            showLoading: true,
-            params,
-        }
+        data: { params }
     })
 }
 
@@ -421,9 +418,6 @@ export function queryOrderDetails(id) {
     return request({
         method: 'get',
         url: `/catering/order/${id}`,
-        data: {
-            showLoading: true,
-        }
     })
 }
 
@@ -439,13 +433,14 @@ export function queryGoodsByOrderId(id) {
         }
     })
 }
-export function queryOrderPlace(id) {
+export function toYieldOrder(id) {
     return request({
         method: 'put',
         headers: { 'Content-Type': 'application/json' },
         url: `catering/order/place/${id}`,
     })
 }
+
 export function queryDeleteByIds(params) {
     return request({
         method: 'DELETE',
@@ -473,7 +468,6 @@ export function queryIngreType(params) {
         method: 'get',
         url: '/pub/catalog/listQuery',
         data: {
-            showLoading: true,
             params,
         }
     })
@@ -483,7 +477,6 @@ export function queryPriceHistory(params) {
         method: 'get',
         url: `/catering/purchaseList/${params.id}/priceList/${params.skuId}`,
         data: {
-            showLoading: true,
             params,
         }
     })
@@ -494,7 +487,6 @@ export function queryDelivery(params) {
         method: 'get',
         url: '/catering/distribution/pageQuery',
         data: {
-            showLoading: true,
             params,
         }
     })

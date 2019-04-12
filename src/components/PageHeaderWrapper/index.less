@@ -1,88 +1,34 @@
 @import '~antd/lib/style/themes/default.less';
 
-.children-content {
-  margin: 24px 24px 0;
-}
-
 .container {
-  .wide {
+   .header {
+    margin-bottom: 20px;
+    background   : #fff;
+
+    .headerContetntWide {
+      max-width: 1200px;
+      margin   : auto;
+      padding  : 20px;
+
+      .logo {
+        >img {
+          display      : block;
+          width        : 28px;
+          height       : 28px;
+          border-radius: @border-radius-base;
+        }
+      }
+
+      .row {
+        margin-bottom: 20px;
+      }
+    }
+
+  }
+
+  .mainContentWide {
     max-width: 1200px;
-    margin   : auto;
+    margin   : 0 auto;
   }
 
-  .wrap {
-    display    : flex;
-    padding: 30px 20px 20px;
-  }
-
-  .row {
-    display: flex;
-    width  : 100%;
-  }
-
-  .logo {
-    flex        : 0 1 auto;
-    margin-right: 16px;
-    padding-top : 1px;
-
-    >img {
-      display      : block;
-      width        : 28px;
-      height       : 28px;
-      border-radius: @border-radius-base;
-    }
-  }
-
-  .title-content {
-    margin-bottom: 16px;
-  }
-
-
-  .title,
-  .content {
-    flex: auto;
-  }
-
-  .action {
-    min-width  : 266px;
-    margin-left: 56px;
-    text-align: right;
-
-    :global {
-
-      .ant-btn-group:not(:last-child),
-      .ant-btn:not(:last-child) {
-        margin-right: 8px;
-      }
-
-      .ant-btn-group>.ant-btn {
-        margin-right: 0;
-      }
-    }
-  }
-
-  .extraContent,
-  .main {
-    flex: 0 1 auto;
-  }
-
-  .main {
-    width: 100%;
-  }
-
-  .title {
-    margin-bottom: 16px;
-  }
-
-  .logo,
-  .content,
-  .extraContent {
-    margin-bottom: 16px;
-  }
-
-  .extraContent {
-    min-width  : 242px;
-    margin-left: 88px;
-    text-align : right;
-  }
 }

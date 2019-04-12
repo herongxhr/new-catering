@@ -28,7 +28,11 @@ const BreadcrumbComponent = ({ className }) => {
                         style={{
                             background: "#fff",
                             boxShadow: "0 2px 4px 0 rgba(0,0,0,0.1)",
-                            margin: '-24px -24px 0', zIndex: 999
+                            margin: '0 -24px',
+                            width: '100vw',
+                            zIndex: 999,
+                            position: 'fixed',
+                            top: 70
                         }}>
                         <Breadcrumb
                             style={{
