@@ -169,40 +169,28 @@ export function queryPMenuTemplate(params) {//餐饮单位模板
     return request({
         method: 'get',
         url: '/catering/camenuTemplate/pageQuery',
-        data: {
-            showLoading: true,
-            params,
-        }
+        data: { params }
     })
 }
 export function queryCMenuTemplate(params) {//餐饮管理单位模板
     return request({
         method: 'get',
         url: '/catering/menuTemplate/recommend/pageQuery',
-        data: {
-            showLoading: true,
-            params,
-        }
+        data: { params }
     })
 }
 // 餐饮单位 模板详情
 export function queryPTemplateDetails(templateId) {
     return request({
         method: 'get',
-        url: `/catering/camenuTemplate/${templateId}`,
-        data: {
-            showLoading: true,
-        }
+        url: `/catering/camenuTemplate/${templateId}`
     })
 }
 // 管理单位模板详情
 export function queryCTemplateDetails(templateId) {//查看模板
     return request({
         method: 'get',
-        url: `/catering/menuTemplate/recommend/vo/${templateId}`,
-        data: {
-            showLoading: true,
-        }
+        url: `/catering/menuTemplate/recommend/vo/${templateId}`
     })
 }
 
@@ -302,9 +290,6 @@ export function queryHasAnyTemplate() {
     return request({
         method: 'get',
         url: '/catering/menuTemplate/recommend/count',
-        data: {
-            showLoading: true
-        }
     })
 }
 

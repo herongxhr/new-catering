@@ -43,7 +43,7 @@ export default {
         customTemplateResult: '',
         // 模板标签
         tagString: '',
-        queryHasAnyTemplate: 0,
+        newTemplate: 0,
         dishDetailData: {},
         // 模板名
         templateName: '',
@@ -310,7 +310,7 @@ export default {
         saveQueryHasAnyTemplate(state, { payload }) {
             return {
                 ...state,
-                queryHasAnyTemplate: payload
+                newTemplate: payload
             }
         },
         saveDishesDetail(state, { payload }) {

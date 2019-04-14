@@ -1,13 +1,12 @@
 import React from 'react'
 import { Select, DatePicker, Row, Col, Button, Radio, Menu, Dropdown } from 'antd';
-
+import moment from 'moment';
 const Option = Select.Option;
-const { RangePicker } = DatePicker;
+const { WeekPicker } = DatePicker;
 
 export default class OrderFilter extends React.Component {
   render() {
     const {
-      className,
       handleFilterChange,
       filterData,
       handleMenuBtnClick,
@@ -19,7 +18,6 @@ export default class OrderFilter extends React.Component {
       select1 = '',
       select2 = '',
       dropDownBtn,
-      statusGroup = ''
     } = filterData;
 
     // 点击新建时会下拉的按钮
@@ -41,20 +39,20 @@ export default class OrderFilter extends React.Component {
     )
 
     return (
-      <div className={className}>
-        <Row>
+      <div >
+        <Row style={{padding:'20px 0 0'}}>
           {/* 左侧列 */}
           <Col span={16}>
             {/* 第一行 */}
             <Row style={{ height: 32, marginBottom: 20 }}>
               {datePicker1 && <Col span={12}>
-                <span >日期选择：</span>
-                <RangePicker
-                  style={{ width: 240 }}
-                  onChange={(_, dateStrings) => {
-                    let [startDate, endDate] = dateStrings;
-                    handleFilterChange({ startDate, endDate, })
-                  }} />
+                <span>选择周次：</span>
+                <WeekPicker
+                  onChange={date => {
+                    const startDate = moment(date).format('YYYY-MM-DD');
+                    handleFilterChange({ startDate });
+                  }}
+                  style={{ width: 240 }} />
               </Col>}
               {/* 下拉框1 */}
               {select1 &&
@@ -95,13 +93,18 @@ export default class OrderFilter extends React.Component {
             <Row>
               <Col style={{ textAlign: 'right' }} >
                 {/* 状态筛选按钮组 */}
-                {statusGroup &&
-                  <Radio.Group
-                    defaultValue={defaultStatus}
-                    onChange={e => handleFilterChange({ status: e.target.value })}>
-                    {statusGroup.map(([value, text], index) =>
-                      <Radio.Button key={index} value={value}>{text}</Radio.Button>)}
-                  </Radio.Group>}
+                <Radio.Group
+                  defaultValue={defaultStatus}
+                  onChange={e => {
+                    handleFilterChange({ status: e.target.value })
+                  }}
+                >
+                  <Radio.Button value={''}>全部</Radio.Button>
+                  <Radio.Button value='00'>待采购</Radio.Button>
+                  <Radio.Button value={'01'}>待下单</Radio.Button>
+                  <Radio.Button value={'10'}>已下单</Radio.Button>
+                  <Radio.Button value={'09'}>已过期</Radio.Button>
+                </Radio.Group>
               </Col>
             </Row>
           </Col>

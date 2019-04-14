@@ -1,11 +1,12 @@
 import React from 'react';
-import { Table, Card, Badge, message } from 'antd';
-//import WrappedInlineForm from '../InlineForm';
+import { Table, Card, Badge, message, Popconfirm, Divider } from 'antd';
 import { routerRedux } from 'dva/router';
 import { connect } from 'dva';
 import BreadcrumbWithTabs from '../../components/BreadcrumbWithTabs';
 import CommonFilter from '../../components/CommonFilter';
+import { getYMD } from '../../utils/utils';
 import styles from './My.less';
+import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 // breadcrumbWithTabs中tabs数据
 const tabList = [
@@ -33,13 +34,7 @@ const filterData = {
 		key: 'choice-template',
 		text: '模板导入'
 	}],
-	statusGroup: [
-		['', '全部'],
-		['0', '未执行'],
-		['1', '已执行']
-	]
 };
-
 class MyMenu extends React.Component {
 	state = {
 		current: 1,
@@ -58,32 +53,11 @@ class MyMenu extends React.Component {
 		}));
 	}
 
-	// 查看订单详情
-	handleView = record => {
-		this.props.dispatch(routerRedux.push({
-			pathname: `/menu-center/my/details`,
-			state: {
-				id: record.id,
-				type: 'my'
-			}
-		}));
-	}
-
-	// 查看订单详情
-	handleDelete = (e, record) => {
-		e.stopPropagation();
-		this.props.dispatch({
-			type: 'menuCenter/deleteMyMenu',
-			payload: record.id
-		}).then(this.success)
-			.then(this.getMenuData);
-	}
-
 	// 获取我的菜单列表
-	getMenuData = (params = {}) => {
+	getMenuList = (params = {}) => {
 		this.setState(params);
 		this.props.dispatch({
-			type: 'menuCenter/fetchMenuData',
+			type: 'menuCenter/fetchMenuList',
 			payload: {
 				...this.state,
 				...params
@@ -91,17 +65,56 @@ class MyMenu extends React.Component {
 		});
 	}
 
+	componentDidMount() {
+		this.getMenuList();
+	}
+	// 列表项操作：查看
+	previewItem = record => {
+		this.props.dispatch(routerRedux.push({
+			pathname: `/menu-center/my/details`,
+			state: {
+				id: record.id,
+			}
+		}));
+	}
+	// 列表项操作：采购
+	yieldPurOrder = record => {
+		this.props.dispatch(routerRedux.push({
+			pathname: '/pur-order/adjust',
+			state: {
+				channel: 'M',
+				type: "S",
+				data: { id: record.id }
+			}
+		}))
+	}
+	// 列表项操作：调整
+	updateMenu = record => {
+		this.props.dispatch(routerRedux.push({
+			pathname: '/menu-center/my/update',
+			state: { id: record.id }
+		}))
+	}
+
+	// 列表项操作：查看订单
+	previewOrder = record => {
+		this.props.dispatch(routerRedux.push({
+			pathname: '/pur-order/details',
+			state: { id: record.id }
+		}))
+	}
+	// 列表项操作：删除
+	handleDelete = record => {
+		this.props.dispatch({
+			type: 'menuCenter/deleteMyMenu',
+			payload: record.id
+		}).then(this.success).then(this.getMenuList);
+	}
 	success() {
 		message.success('菜单删除成功')
 	}
 
-	componentDidMount() {
-		this.getMenuData();
-	}
-
-	// commonFilter新建按钮点击回调
-	// 下拉式按钮返回e指向当前点击按钮本身
-	// 自定义菜单时，清空之前排餐数据
+	// 列表项操作：新建
 	handleBtnClick = e => {
 		const { dispatch } = this.props;
 		// 清空之前菜单数据，菜单详情数据
@@ -119,7 +132,8 @@ class MyMenu extends React.Component {
 			{
 				title: '菜单编号',
 				dataIndex: 'menuCode',
-				key: 'menuCode',
+				render: (text, record) =>
+					(<a onClick={() => this.previewItem(record)}>{text}</a>)
 			}, {
 				title: '周次',
 				dataIndex: 'week',
@@ -128,95 +142,86 @@ class MyMenu extends React.Component {
 				title: '日期',
 				dataIndex: 'date',
 				key: 'date',
+				render: (_, record) =>
+					getYMD(record.beginDate) + '~' + getYMD(record.endDate)
 			}, {
-				title: '执行状态',
-				dataIndex: 'status',
-				key: 'status',
-				render: text => {
-					if (text === '1') {
-						return (
-							<span>
-								<Badge status="success" />
-								<span>已执行</span>
-							</span>
-						)
-					} else if (text === '0') {
-						return (
-							<span>
-								<Badge status="warning" />
-								<span>未执行</span>
-							</span>)
-					} else {
-						return (
-							<span>
-								<Badge status="default" />
-								<span>已过期</span>
-							</span>)
-					}
-				}
+				title: '状态',
+				dataIndex: 'statusDisplayName',
+				render: text => `${text}`
 			}, {
 				title: '操作',
-				key: 'actions',
+				dataIndex: 'status',
+				width: 160,
 				render: (_, record) => {
-					const status = record.status || '1'
-					if (status === '0') {
-						return <a onClick={e => { this.handleDelete(e, record) }}>删除</a>
-					} else if (status === '1') {
-						return <span onClick={() => this.handleView(record)}
-							style={{ cursor: 'pointer' }}>查看</span>;
-					} else {
-						return <span>已过期</span>
+					const status = record.status || ''
+					switch (status) {
+						case '10':
+							return <a onClick={() => this.previewOrder(record)}>查看订单</a>
+						case '00'://待采购
+							return (
+								<span>
+									<a onClick={() => this.yieldPurOrder(record)}
+										style={{ color: 'orange' }}>采购</a>
+									<Divider type={'vertical'} />
+									<a onClick={() => this.updateMenu(record)}
+									>调整</a>
+									<Divider type={'vertical'} />
+									<Popconfirm
+										title='确定要删除吗？'
+										onConfirm={() => this.handleDelete(record)}
+									><a>删除</a></Popconfirm>
+								</span >
+							)
+						case '01'://待下单
+							return <a onClick={() => this.previewOrder(record)}>查看订单</a>
+						case '09':
+						default:
+							break;
 					}
 				}
-			}];
-		const { location, menuList } = this.props;
+			},
+		];
+		const { location, menuList, isLoading } = this.props;
 		// 状态筛选条状态值
 		const records = menuList.records || [];
-		// 状态筛选条状态值
-		const { status } = this.state;
 		return (
-			<div>
+			<div className={styles.my}>
 				<BreadcrumbWithTabs
 					{...location}
 					tabList={tabList}
 					onChange={this.handleTabChange}
 					activeTabKey={'my'}
 				/>
-				<Card className={styles.tableList} bordered={false}>
-					<div >
-						<CommonFilter
-							// 过滤器所用控件数据
-							filterData={filterData}
-							// 控制改变时的回调
-							handleFilterChange={this.getMenuData}
-							// 点击按钮时的回调
-							handleMenuBtnClick={this.handleBtnClick}
-							defaultStatus={status}
-						/>
-						<Table
-							columns={tableColumns}
-							dataSource={records}
-							rowKey="id"
-							onRow={record => {
-								return {
-									onClick: () => this.handleView(record)
-								}
-							}}
-							pagination={{
-								current: menuList.current || 1,
-								pageSize: menuList.size || 10,
-								total: menuList.total || 0
-							}}
-							onChange={({ current, pageSize }) =>
-								this.getMenuData({ current, pageSize })}
-						/>
-					</div>
-				</Card>
+				<PageHeaderWrapper withTabs={true}>
+					<CommonFilter
+						// 过滤器所用控件数据
+						filterData={filterData}
+						// 控制改变时的回调
+						handleFilterChange={this.getMenuList}
+						// 点击按钮时的回调
+						handleMenuBtnClick={this.handleBtnClick}
+						defaultStatus={this.state.status}
+					/>
+					<Table
+						loading={isLoading}
+						columns={tableColumns}
+						dataSource={records}
+						rowKey="id"
+						pagination={{
+							current: menuList.current || 1,
+							pageSize: menuList.size || 10,
+							total: menuList.total || 0
+						}}
+						onChange={({ current, pageSize }) =>
+							this.getMenuList({ current, pageSize })}
+					/>
+				</PageHeaderWrapper>
 			</div>
 		)
 	}
 }
 
-export default connect(({ menuCenter }) => ({
-	menuList: menuCenter.menuList
+export default connect(({ menuCenter, loading }) => ({
+	menuList: menuCenter.menuList,
+	isLoading: loading.effects['menuCenter/fetchMenuData']
 }))(MyMenu)

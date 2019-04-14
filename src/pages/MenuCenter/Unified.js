@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import Moment from 'moment';
-import { Card, Table, Badge } from 'antd';
+import { Table, Divider } from 'antd';
 import styles from './Unified.less';
 import BreadcrumbWithTabs from '../../components/BreadcrumbWithTabs';
 import CommonFilter from '../../components/CommonFilter';
@@ -26,13 +25,9 @@ const tabList = [
 ];
 
 // 列表表格上面筛选过滤功能组件所需数据
+// 列表表格上面筛选过滤功能组件所需数据
 const filterData = {
 	datePicker1: true,
-	statusGroup: [
-		['', '全部'],
-		['0', '未执行'],
-		['1', '已执行']
-	]
 };
 class MenuCenter extends React.Component {
 	state = {
@@ -44,6 +39,11 @@ class MenuCenter extends React.Component {
 		onlyIssued: true
 	}
 
+	static getDerivedStateFromProps(props) {
+		const { location: { state = {} } } = props;
+		return { status: state.status || '' }
+	}
+
 	// 点击tabs标签跳转到指定页面
 	handleTabChange = key => {
 		this.props.dispatch(routerRedux.push({
@@ -51,16 +51,6 @@ class MenuCenter extends React.Component {
 		}));
 	}
 
-	// 查看订单详情
-	handleShowDetail = record => {
-		this.props.dispatch(routerRedux.push({
-			pathname: `/menu-center/unified/details`,
-			state: {
-				id: record.id,
-				type: 'unified'
-			}
-		}));
-	}
 	// 获取统一菜单列表
 	getMenuList = (params = {}) => {
 		this.setState(params);
@@ -76,23 +66,56 @@ class MenuCenter extends React.Component {
 	componentDidMount() {
 		this.getMenuList();
 	}
+	// 列表项操作：查看
+	previewItem = record => {
+		this.props.dispatch(routerRedux.push({
+			pathname: `/menu-center/unified/details`,
+			state: {
+				id: record.id,
+			}
+		}));
+	}
+	// 列表项操作：采购
+	yieldPurOrder = record => {
+		this.props.dispatch(routerRedux.push({
+			pathname: '/pur-order/adjust',
+			state: {
+				channel: 'M',
+				type: "S",
+				data: { id: record.id }
+			}
+		}))
+	}
+	// 列表项操作：调整
+	updateMenu = record => {
+		this.props.dispatch(routerRedux.push({
+			pathname: '/menu-center/my/update',
+			state: { id: record.id }
+		}))
+	}
 
+	// 列表项操作：查看订单
+	previewOrder = record => {
+		this.props.dispatch(routerRedux.push({
+			pathname: '/pur-order/details',
+			state: { id: record.id }
+		}))
+	}
 	render() {
-		const tableColumns = [
+		const tableCols = [
 			{
 				title: '菜单编号',
 				dataIndex: 'menuCode',
-				key: 'menuCode',
+				render: (text, record) =>
+					(<a onClick={() => this.previewItem(record)}>{text}</a>)
 			},
 			{
 				title: '周次',
 				dataIndex: 'week',
-				key: 'week',
-				render: text => `第${text}周`
+				render: text => `第${text || ''}周`
 			},
 			{
 				title: '日期',
-				dataIndex: 'date',
 				key: 'date',
 				render: (_, record) =>
 					getYMD(record.beginDate) + '~' + getYMD(record.endDate)
@@ -108,84 +131,80 @@ class MenuCenter extends React.Component {
 			{
 				title: '下达时间',
 				dataIndex: 'createTime',
-				key: 'createTime',
 				render: text => getYMD(text)
 			},
 			{
-				title: '执行状态',
+				title: '状态',
+				dataIndex: 'statusDisplayName',
+				render: text => `${text}`
+			},
+			{
+				title: '操作',
+				width: 160,
 				dataIndex: 'status',
-				key: 'status',
-				render: text => {
-					if (text === '1') {
-						return (
-							<span>
-								<Badge status="success" />
-								<span>已执行</span>
-							</span>
-						)
-					} else if (text === '0') {
-						return (
-							<span>
-								<Badge status="warning" />
-								<span>未执行</span>
-							</span>)
-					} else {
-						return (
-							<span>
-								<Badge status="default" />
-								<span>已过期</span>
-							</span>)
+				render: (_, record) => {
+					const status = record.status || ''
+					switch (status) {
+						case '10':
+							return <a onClick={() => this.previewOrder(record)}>查看订单</a>
+						case '00'://待采购
+							return (
+								<span>
+									<a onClick={() => this.yieldPurOrder(record)}>采购</a>
+									<Divider type={'vertical'} />
+									<a onClick={() => this.updateMenu(record)}
+										style={{ color: 'orange' }}>调整</a>
+								</span>
+							)
+						case '01'://待下单
+							return <a onClick={() => this.previewOrder(record)}>查看订单</a>
+						case '09':
+						default:
+							break;
 					}
 				}
-			}
+			},
 		];
-		const { location, menuList } = this.props;
+		const { location, menuList, isLoading } = this.props;
 		const records = menuList.records || [];
 		// 状态筛选条状态值
 		const { status } = this.state;
 		return (
-			<div>
+			<div className={styles.unified}>
 				<BreadcrumbWithTabs
 					{...location}
 					tabList={tabList}
 					onChange={this.handleTabChange}
 					activeTabKey={'unified'}
 				/>
-				<PageHeaderWrapper>
-					<Card className={styles.tableList} bordered={false}>
-						<div >
-							<CommonFilter
-								// 过滤器所用控件数据
-								filterData={filterData}
-								// 控制改变时的回调
-								handleFilterChange={this.getMenuData}
-								defaultStatus={status}
-							/>
-							<Table
-								columns={tableColumns}
-								dataSource={records}
-								rowKey="id"
-								onRow={(record) => {
-									return {
-										onClick: () => this.handleShowDetail(record)
-									}
-								}}
-								pagination={{
-									current: menuList.current || 1,
-									pageSize: menuList.size || 10,
-									total: menuList.total || 0
-								}}
-								onChange={({ current, pageSize }) =>
-									this.getMenuData({ current, pageSize })}
-							/>
-						</div>
-					</Card>
+				<PageHeaderWrapper withTabs={true}>
+					<CommonFilter
+						// 过滤器所用控件数据
+						filterData={filterData}
+						// 控制改变时的回调
+						handleFilterChange={this.getMenuList}
+						defaultStatus={status}
+					/>
+					<Table
+						loading={isLoading}
+						columns={tableCols}
+						dataSource={records}
+						rowKey="id"
+						pagination={{
+							current: menuList.current || 1,
+							pageSize: menuList.size || 10,
+							total: menuList.total || 0
+						}}
+						onChange={({ current, pageSize }) =>
+							this.getMenuList({ current, pageSize })}
+					/>
 				</PageHeaderWrapper>
 			</div>
 		);
 	}
 }
 
-export default connect(({ menuCenter }) => ({
+export default connect(({ menuCenter, loading }) => ({
 	menuList: menuCenter.menuList,
+	isLoading: loading.effects['menuCenter/fetchMenuList']
 }))(MenuCenter); 
