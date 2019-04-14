@@ -51,11 +51,11 @@ class PurOrderList extends React.Component {
 		const { dispatch } = this.props;
 		const actionId = action.id || action;
 		switch (actionId) {
-			case 'FOrder':// 新建
-			case 'SOrder':
+			case 'customF':// 新建
+			case 'customS':
 				this.props.dispatch(routerRedux.push({
-					pathname: '/purOrder/adjust',
-					state: { type: actionId, channel: 'N' }
+					pathname: `/pur-order/${actionId}`,
+					state: { channel: `${actionId}` }
 				}))
 				break;
 			case 'preview':// 查看
@@ -109,7 +109,6 @@ class PurOrderList extends React.Component {
 	success = () => {
 		message.success('操作成功')
 	}
-
 
 	render() {
 		const tabColumns = [

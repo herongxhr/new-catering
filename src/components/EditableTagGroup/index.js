@@ -44,7 +44,7 @@ class EditableTagGroup extends React.Component {
             key={index}
             color={colors[index]}
             closable
-            afterClose={() => this.handleClose(tag)}>
+            onClose={() => this.handleClose(tag)}>
             {isLongTag ? `${tag.slice(0, 10)}...` : tag}
           </Tag>);
           return isLongTag ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip> : tagElem;

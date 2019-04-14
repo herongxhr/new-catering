@@ -34,12 +34,12 @@ const PageHeaderWrapper = ({
               {/* 标题和操作区 */}
               <Row className={styles.row}>
                 <Col span={12}><h1>{title}</h1></Col>
-                <Col span={12} style={{textAlign: 'right'}}>{action}</Col>
+                <Col span={12} style={{ textAlign: 'right' }}>{action}</Col>
               </Row>
               {/* 描述和状态区 */}
               <Row >
                 {content && <Col span={16}>{content}</Col>}
-                {extraContent && <Col span={8} style={{textAlign: 'right'}}>{extraContent}</Col>}
+                {extraContent && <Col span={8} style={{ textAlign: 'right' }}>{extraContent}</Col>}
               </Row>
             </Col>
           </Row>
@@ -48,7 +48,7 @@ const PageHeaderWrapper = ({
       {/* 主要内容区域 */}
       {children ? (
         <div className={`${contentWidth === 'Fixed' ? styles.mainContentWide : ''}`}>
-          {children}
+          <div className={styles.body}>{children}</div>
         </div>
       ) : null}
     </div>

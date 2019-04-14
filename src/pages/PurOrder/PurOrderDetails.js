@@ -6,7 +6,6 @@ import PageHeadWrapper from '@/components/PageHeaderWrapper';
 import styles from './PurOrderDetails.less';
 import { routerRedux } from 'dva/router';
 import { getYMD } from '../../utils/utils';
-import { Scrollbars } from 'react-custom-scrollbars';
 import DisAcceptTable from '@/components/DisAcceptTable'
 import BreadcrumbComponent from '@/components/BreadcrumbComponent';
 
@@ -75,79 +74,73 @@ class PurOrderDetails extends React.Component {
 	componentDidMount() {
 		this.getOrderDetails();
 	}
-	// showModal = () => {
-	// 	this.setState({
-	// 		visible: true,
-	// 	});
-	// }
 
-	// handleOk = (e) => {
-	// 	this.setState({
-	// 		visible: false,
-	// 	});
-	// 	message.success('操作成功');
-	// }
-
-	// handleOrder = (e) => {
-	// 	const { dispatch } = this.props;
-	// 	const payload = {}
-	// 	payload.callback = (params) => {
-	// 		if (params) {
-	// 			this.getOrderDetails()
-	// 		}
-	// 	}
-	// 	payload.id = this.state.id
-	// 	dispatch({
-	// 		type: 'purOrder/queryOrderPlace',
-	// 		payload: payload
-	// 	})
-	// 	this.setState({
-	// 		visible: false,
-	// 	});
-	// }
-
-	// handleCancel = (e) => {
-	// 	this.setState({
-	// 		visible: false,
-	// 	});
-	// }
-
-	// purOrderAdjust = (pathname, id) => {
-	// 	const { props } = this
-	// 	props.dispatch(routerRedux.push({
-	// 		pathname,
-	// 		state: {
-	// 			adjustId: id
-	// 		}
-	// 	}))
-	// }
-
-
-
-	// queryDelivery = (params = {}) => {
-	// 	const { dispatch } = this.props;
-	// 	dispatch({
-	// 		type: 'deliveryAcce/queryDelivery',
-	// 		payload: {
-	// 			...params
-	// 		}
-	// 	})
-	// }
-
-	// showDistributionModal = (orderNo, e) => {
-	// 	e.stopPropagation()
-	// 	this.setState({
-	// 		visible: true,
-	// 	});
-	// 	this.queryDelivery({
-	// 		orderNo: orderNo
-	// 	})
-	// }
-
+	// 列表项操作：新建/查看/删除/下单/查看验收单
+	handleListItemActions = e => {
+		const { id } = this.state;
+		const { dispatch } = this.props;
+		const action = e.target.id;
+		switch (action) {
+			case 'delete':// 删除
+				dispatch({
+					type: 'purOrder/queryDeleteByIds',
+					payload: {
+						ids: [id]
+					},
+				}).then(this.success).then(this.redirectToPurOrderList);
+				break;
+			case 'order':// 下单
+				dispatch({
+					type: 'purOrder/yieldOrder',
+					payload: id
+				}).then(this.success).then(() => this.redirectToPurOrderDetails(id))
+				break;
+			case 'showDeliveryModal':// 查看配送
+				this.setState({
+					visible: true,
+				});
+				dispatch({
+					type: 'deliveryAcce/queryDelivery',
+					payload: id
+				})
+				break;
+			case 'adjust':
+				dispatch(routerRedux.push({
+					pathname: '/pur-order/adjust',
+					state: { id }
+				}))
+				break;
+			default:
+				break;
+		}
+	}
+	// 下单后跳转
+	redirectToPurOrderDetails = id => {
+		this.props.dispatch(routerRedux.push({
+			pathname: '/pur-order/details',
+			state: { id }
+		}))
+	}
+	// 下单后跳转
+	redirectToPurOrderList = () => {
+		this.props.dispatch(routerRedux.push({
+			pathname: '/pur-order/list',
+		}))
+	}
+	//modal展示
+	handleOk = () => {
+		this.setState({
+			visible: false,
+		});
+	}
+	success = () => {
+		message.success('操作成功')
+	}
 
 	render() {
-		const { orderDetails, isLoading } = this.props;
-		let orderDetailVos = orderDetails.orderDetailVos || []
+		const { orderDetails, isLoading, delivery } = this.props;
+		const goodsItems = orderDetails.orderDetailVos || [];
+		const deliveryRecords = delivery.records || [];
 		const extra = (
 			<Row>
 				<Col xs={24} sm={12}>
@@ -187,20 +180,19 @@ class PurOrderDetails extends React.Component {
 		const isFinished = orderDetails.status === '1';
 		const actions = (
 			<Fragment>
-				<ButtonGroup style={{ marginRight: 20 }}>
-					{noFinished && <Button >删除</Button>}
-					{noFinished && <Button onClick={() => { }}>调整</Button>}
-					{isFinished && <Button >再来一单</Button>}
+				<ButtonGroup style={{ marginRight: 20 }} onClick={this.handleListItemActions}>
+					{noFinished && <Button id='delete'>删除</Button>}
+					{noFinished && <Button id='adjust'>调整</Button>}
+					{isFinished && <Button id='buyAgain' >再来一单</Button>}
 				</ButtonGroup>
 				{/* <Button>打印</Button> */}
-				{noFinished && <Button type="primary" >下单</Button>}
-				{isFinished && <Button type="primary">查看配送验收情况</Button>}
+				{noFinished && <Button id='order' type="primary"
+					onClick={this.handleListItemActions}>下单</Button>}
+				{isFinished && <Button id='showDeliveryModal' type="primary"
+					onClick={this.handleListItemActions}>查看配送验收情况</Button>}
 			</Fragment>
 		);
 
-		// const { visible } = this.state
-		// const { delivery = {} } = this.props
-		// const deliveryRecords = delivery.records || []
 		return (
 			<div className={styles.wrap}>
 				<BreadcrumbComponent />
@@ -216,53 +208,32 @@ class PurOrderDetails extends React.Component {
 					content={description}
 					extraContent={extra}
 				>
-					<div className={styles.body}>
-						<div className={styles.title}>商品明细</div>
-						<Table
-							loading={isLoading}
-							columns={tabColumns}
-							dataSource={orderDetailVos}
-							rowKey='id'
-							pagination={{
-								current: orderDetails.current || 1,
-								pageSize: orderDetails.pageSize || 10,
-								total: orderDetails.total || 0
-							}}
-						/>
-					</div>
-					{/* {
-						orderDetails.status == '1' ? (
-							<Scrollbars style={{ width: 1060, height: 628 }}>
-								<Modal title="配送验收情况"
-									className={styles.orderModal}
-									visible={this.state.visible}
-									onOk={this.handleOk}
-									//onCancel={this.handleCancel}
-									closable={false}
-									width={1060}
-									maskStyle={{ background: 'rgba(0,0,0,0.25)' }}
-									footer={[
-										<Button key="submit" type="primary" onClick={this.handleOk}>
-											关闭
-										</Button>,
-									]}
-								>
-									<DisAcceptTable records={deliveryRecords} />
-								</Modal>
-							</Scrollbars>
-						) : (
-								<Modal
-									visible={visible}
-									onOk={this.handleOrder}
-									onCancel={this.handleCancel}
-									bodyStyle={modalObject}
-									width='340px'
-									closable={false}
-								>
-									<Alert message="采购单将下发给各供货商，确认下单？" type="warning" showIcon style={{ background: 'white', border: '0px', marginTop: '40px' }} />
-								</Modal>
-							)
-					} */}
+					<div className={styles.title}>商品明细</div>
+					<Table
+						loading={isLoading}
+						columns={tabColumns}
+						dataSource={goodsItems}
+						rowKey='id'
+						pagination={false}
+						footer={data => (
+							<h3 className={styles.total}>
+								共有：<span style={{ color: 'orange' }}>{data.length || 0}</span> 件商品
+							</h3>
+						)}
+					/>
+					<Modal title="配送验收情况"
+						className={styles.orderModal}
+						visible={this.state.visible}
+						bodyStyle={{ height: 485 }}
+						closable={false}
+						width={1060}
+						maskStyle={{ background: 'rgba(0,0,0,0.25)' }}
+						footer={[
+							<Button type="primary" onClick={this.handleOk}>关闭</Button>
+						]}
+					>
+						<DisAcceptTable records={deliveryRecords} />
+					</Modal>
 				</PageHeadWrapper>
 			</div>
 		)

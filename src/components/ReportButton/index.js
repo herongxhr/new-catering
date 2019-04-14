@@ -115,7 +115,7 @@ class ReportButton extends React.Component {
               cancelText="取消"
               width={780}
               closable={false}
-              afterClose={() => {
+              onClose={() => {
                 this.props.form.resetFields();
               }}  
               >

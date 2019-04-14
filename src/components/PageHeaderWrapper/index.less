@@ -1,7 +1,10 @@
 @import '~antd/lib/style/themes/default.less';
 
 .container {
-   .header {
+  // 整屏高度- 菜单高度 - 面包屑高度 - margin负值
+  height: 100%;
+
+  .header {
     margin-bottom: 20px;
     background   : #fff;
 
@@ -27,8 +30,15 @@
   }
 
   .mainContentWide {
+    height   : 100%;
     max-width: 1200px;
     margin   : 0 auto;
+
+    .body {
+      background: #fff;
+      height    : 100%;
+      padding   : 0 30px 20px;
+    }
   }
 
 }

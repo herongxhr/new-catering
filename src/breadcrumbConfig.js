@@ -30,7 +30,9 @@ export default {
     //采购订单
     '/pur-order': '采购订单',
     '/pur-order/list': '列表',
-    '/purOrder/new/': '新建订单',
+    '/pur-order/list': '订单调整',
+    '/pur-order/customF': '新建辅料订单',
+    '/pur-order/customS': '新建食材订单',
     '/pur-order/details': '详情',
     '/delivery/': '配送验收',
     '/parameter/': '台帐',

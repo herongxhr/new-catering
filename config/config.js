@@ -48,7 +48,6 @@ export default {
         getLocalIdent: (context, localIdentName, localName) => {
             if (
                 context.resourcePath.includes('node_modules') ||
-                context.resourcePath.includes('ant.design.pro.less') ||
                 context.resourcePath.includes('global.less')
             ) {
                 return localName;
@@ -61,7 +60,7 @@ export default {
                     .split('/')
                     .map(a => a.replace(/([A-Z])/g, '-$1'))
                     .map(a => a.toLowerCase());
-                return `antd-pro${arr.join('-')}-${localName}`.replace(/--/g, '-');
+                return `catering${arr.join('-')}-${localName}`.replace(/--/g, '-');
             }
             return localName;
         },

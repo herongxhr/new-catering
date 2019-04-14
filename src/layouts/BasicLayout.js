@@ -86,7 +86,7 @@ class BasicLayout extends React.Component {
     };
 
     render() {
-        console.log('props',this.props)
+        console.log('props', this.props)
         const { // 大部分属性来自setting model
             navTheme,
             layout: PropsLayout,
@@ -101,36 +101,23 @@ class BasicLayout extends React.Component {
         const isTop = PropsLayout === 'topmenu';
         const contentStyle = !fixedHeader ? { paddingTop: 0 } : {};
         const layout = (
-            <Layout>
-                {/* 是否显示边栏菜单布局 */}
-                {isTop && !isMobile ? null : (
-                    <SiderMenu
-                        logo={logo}
-                        theme={navTheme}
-                        onCollapse={this.handleMenuCollapse}
-                        menuData={menuData}
-                        isMobile={isMobile}
-                        {...this.props}
-                    />
-                )}
-                <Layout
-                    style={{
-                        ...this.getLayoutStyle(),
-                        minHeight: '100vh',
-                    }}
-                >
-                    <Header
-                        menuData={menuData}
-                        handleMenuCollapse={this.handleMenuCollapse}
-                        logo={logo}
-                        isMobile={isMobile}
-                        {...this.props}
-                    />
-                    <Content className={styles.content} style={contentStyle}>
-                        {children}
-                    </Content>
-                    {/* <Footer /> */}
-                </Layout>
+            <Layout
+                style={{
+                    ...this.getLayoutStyle(),
+                    minHeight: '100vh',
+                }}
+            >
+                <Header
+                    menuData={menuData}
+                    handleMenuCollapse={this.handleMenuCollapse}
+                    logo={logo}
+                    isMobile={isMobile}
+                    {...this.props}
+                />
+                <Content className={styles.content} style={contentStyle}>
+                    {children}
+                </Content>
+                {/* <Footer /> */}
             </Layout>
         );
         return (

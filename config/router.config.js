@@ -95,6 +95,21 @@ export default [
                         path: '/pur-order/details',
                         component: './PurOrder/PurOrderDetails',
                     },
+                    {
+                        // 新建辅料订单页
+                        path: '/pur-order/customF',
+                        component: './PurOrder/PurOrderAdjust',
+                    },
+                    {
+                        // 新建食材订单页
+                        path: '/pur-order/customS',
+                        component: './PurOrder/PurOrderAdjust',
+                    },
+                    {
+                        // 调整页
+                        path: '/pur-order/adjust',
+                        component: './PurOrder/PurOrderAdjust',
+                    },
                 ],
             },
             {

@@ -1,46 +1,16 @@
-/*
- * @Author: suwei 
- * @Date: 2019-03-20 15:07:45 
- * @Last Modified by: suwei
- * @Last Modified time: 2019-03-30 16:34:46
- */
-import React, { PureComponent, Fragment } from 'react';
-import { Table, Button, Input, Popconfirm, DatePicker, Select, Tag, message } from 'antd';
+import React, { Fragment } from 'react';
+import { DatePicker, Select, Tag, Form, Button, InputNumber, Row, Col } from 'antd';
 import { connect } from 'dva';
-import Selectf from '../../components/SelectIngredients';
 import moment from 'moment'
-import isNull from 'lodash/isNull'
-import { getYMD } from '../../utils/utils'
-
-import './PurOrderTable.less'
-
+import styles from './PurOrderTable.less'
 
 const Option = Select.Option;
-const dateFormat = 'YYYY/MM/DD';
-
-class PurOrderTable extends PureComponent {
-  index = 0;
-
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: false,
-      value: [],
-      visible: false,
-    };
-  }
-
-  //获取单一表格数据
-  getRowByKey(key, newData) {
-    const { data } = this.state;
-    return (newData || data).filter(item => item.id === key)[0];
-  }
+class PurOrderTable extends React.Component {
 
   //请求供货商列表
-  querySupplier = (params = {}) => {
+  getMySupplier = (params = {}) => {
     this.props.dispatch({
-      type: 'setting/querySupplier',
+      type: 'useSetting/fetchMySupplier',
       payload: {
         ...params
       },
@@ -48,82 +18,17 @@ class PurOrderTable extends PureComponent {
   }
 
   componentDidMount() {
-    this.querySupplier()
+    this.getMySupplier()
   }
 
-
-  deleteMeal = (params) => {
-    const { props } = this
-    props.dispatch({
-      type: 'purOrder/delelteOrderTableForm',
-      payload: params
+  handleSubmit = e => {
+    e.preventDefault();
+    const { form } = this.props;
+    form.validateFields((err, values) => {
+      if (err) return;
+      const { skusItem } = values;
+      console.log('value', skusItem);
     })
-    props.dispatch({
-      type: 'meal/removeMeal',
-      payload: params,
-    })
-  }
-
-  addMeal = (params) => {
-    params.editable = true
-    this.props.dispatch({
-      type: 'meal/addMeal',
-      payload: params,
-    })
-    this.props.dispatch({
-      type: 'purOrder/addOrderTableForm',
-      payload: params
-    })
-  }
-
-  //Input输入的时候改变值
-  handleFieldChange = (e, fieldName, key) => {
-    let changeValue = Number(e.target.value)
-    const { props } = this
-    const { orderTableForm } = props
-    const newData = orderTableForm.map(item => ({ ...item }));
-    const target = this.getRowByKey(key, newData)
-    if (target) {
-      if (changeValue == 0) {
-        props.dispatch({
-          type: 'purOrder/priceVerify',
-          payload: true
-        })
-      }
-      if (changeValue < 0) {
-        props.dispatch({
-          type: 'purOrder/priceVerify',
-          payload: true
-        })
-      }
-      if (changeValue > 0) {
-        props.dispatch({
-          type: 'purOrder/priceVerify',
-          payload: false
-        })
-      }
-
-      target[fieldName] = changeValue;
-      props.dispatch({
-        type: 'purOrder/InputorderForm',
-        payload: newData
-      })
-    }
-  }
-
-  //datePicker输入的时候改变值
-  handleDateChange(fieldName, key, date, dateString) {
-    const { props } = this
-    const { orderTableForm } = props
-    const newData = orderTableForm.map(item => ({ ...item }));
-    const target = this.getRowByKey(key, newData);
-    if (target) {
-      target[fieldName] = dateString;
-      props.dispatch({
-        type: 'purOrder/InputorderForm',
-        payload: newData
-      })
-    }
   }
 
   range = (start, end) => {
@@ -133,226 +38,130 @@ class PurOrderTable extends PureComponent {
     }
     return result;
   }
-  
+
   disabledDate = (current) => {
     // Can not select days before today and today
     return current && current < moment().endOf('day');
   }
 
-  //select选择的时候改变值
-  handleSelectChange(fieldName, key, value) {
-    const { props } = this
-    const { orderTableForm } = props
-    const newData = orderTableForm.map(item => ({ ...item }));
-    const target = this.getRowByKey(key, newData);
-    if (target) {
-      target[fieldName] = value;
-      props.dispatch({
-        type: 'purOrder/InputorderForm',
-        payload: newData
-      })
-    }
-  }
-
-  handleModalVisble = (params) => {
-    this.setState({
-      visible: false,
-    })
-  }
-
-  handleModalHidden = () => {
-    this.setState({
-      visible: false
-    })
-  }
-
-  //请求食材选择器列表
-  queryNewOrderSelectf = () => {
-    const { props } = this
-    props.dispatch({
-      type: 'purOrder/queryOrderSelectf',
-      payload: {
-        cateringId: 'f970fb8a4e99402da175dba8ca87ef1c'
-      },
-      callback: (value) => {
-        this.setState({
-          visible: true,
-          value: value
-        });
-      },
-    })
-  }
-
-  componentWillMount() {
-    this.props.dispatch({
-      type: 'meal/clearMeal',
-    })
-  }
-
   render() {
-    const tabColumns = [
-      {
-        title: '商品',
-        key: 'goodsName',
-        dataIndex: 'goodsName',
-        width: '25%',
-        render: (text, record) => {
-          return text;
-        },
-      },
-      {
-        title: '单位',
-        key: 'unit',
-        dataIndex: 'unit',
-        render: (text, record) => {
-          return text;
-        },
-      },
-      {
-        title: '单价',
-        key: 'price',
-        dataIndex: 'price',
-        render: (text, record) => {
-          if (record.price.toString() == '0') {
-            return <Input
-              style={{ width: '70px', border: '1px solid red' }}
-              autoFocus
-              onChange={e => this.handleFieldChange(e, 'price', record.id)}
-              placeholder="单价"
-            />
-          }
-          return <Input
-            style={{ width: '70px' }}
-            autoFocus
-            onChange={e => this.handleFieldChange(e, 'price', record.id)}
-            placeholder="单价"
-            defaultValue={text}
-          />
-        },
-      },
-      {
-        title: '数量',
-        key: 'quantity',
-        dataIndex: 'quantity',
-        render: (text, record) => {  //render里面三个参数的意思 text , record ,index  当前行的值，当前行数据，行索引
-          return (<Input
-            onChange={e => this.handleFieldChange(e, 'quantity', record.id)}
-            placeholder="0"
-            style={{ width: '70px' }}
-            defaultValue={text}
-          />)
-        },
-      },
-      {
-        title: '供应商',
-        key: 'supplierId',
-        dataIndex: 'supplierId',
-        render: (text, record) => {
-          if (isNull(text)) {  //判断isNull
-            return (
-              <Select  onChange={this.handleSelectChange.bind(this, 'supplierId', record.id)} style={{ width: '218px' }} placeholder='请选择'>
-                {supplier.map(item => (
-                  <Option key={item.id} value={item.id}>{item.supplierName}</Option>
-                ))}
-              </Select>
-            )
-          } //可编辑
-          return (
-            <Select onChange={this.handleSelectChange.bind(this, 'supplierId', record.id)} style={{ width: '218px' }} placeholder='请选择'>
-              {supplier.map(item => (
-                <Option key={item.id} value={item.id}>{item.supplierName}</Option>
-              ))}
-            </Select>
-          )
-        },
-      },
-      {
+    const { skuItems, isLoading, form, mySupplier } = this.props;
+    const { getFieldDecorator, getFieldValue } = form;
 
-        title: '配送日期',
-        key: 'requiredDate',
-        dataIndex: 'requiredDate',
-        render: (text, record) => {
-          const { requiredDate } = record
-          const date = getYMD(requiredDate)
-          return (
-            <DatePicker 
-            defaultValue={requiredDate ? moment(date, dateFormat) : null} 
-            onChange={this.handleDateChange.bind(this, 'requiredDate', record.id)} 
-            style={{ width: '130px' }} 
-            format="YYYY-MM-DD"
-            disabledDate={this.disabledDate}
-            />
-          )
-        },
-      },
-      {
-        title: '操作',
-        key: 'operation',
-        render: (text, record) => {
-          return (
-            <span>
-              <Popconfirm title="是否要删除此行？" onConfirm={() => this.deleteMeal(record.skuId)}>
-                <a>删除</a>
-              </Popconfirm>
-            </span>
-          )
-        }
-      }
-    ];
-    const { loading, visible } = this.state;
-    const { supplier } = this.props
-    //解数据
-    const { value } = this.state
-    const { records } = value
-    const { orderTableForm } = this.props
-    //
-    const CardTitle = () => {
-      return (
-        <div style={{ marginBottom: '20px' }}>
-          <span style={{ marginRight: '10px' }}>商品明细</span>
-          <Tag color="cyan">{`共${orderTableForm.length}条`}</Tag>
-        </div>
-      )
-    }
+    getFieldDecorator('skus', { initialValue: skuItems });
     return (
       <Fragment>
-        {CardTitle()}
-        <Table
-          loading={loading}  //通过loading这个变量的值判断页面是否在加载中
-          columns={tabColumns}
-          dataSource={orderTableForm}
-          pagination={false}
-          rowKey='id'
-          className='purorderTable'
-        />
-        <Button
-          style={{ width: '100%', marginTop: 16, marginBottom: 8 }}
-          type="dashed"
-          onClick={this.queryNewOrderSelectf}
-          icon="plus"
-        >
-          添加
-        </Button>
-        {
-          visible ? <Selectf
-            dataSource={records}
-            handleModalVisble={this.handleModalVisble}
-            handleModalHidden={this.handleModalHidden}
-            addMeal={this.addMeal}
-            deleteMeal={this.deleteMeal}
-            mealArray={this.props.mealArray}
-            visible={this.state.visible}
+        <div className={styles.title}>
+          <span style={{ marginRight: '10px' }}>商品明细</span>
+          <Tag color="cyan">{`共${skuItems.length}条`}</Tag>
+        </div>
+        <Form onSubmit={this.handleSubmit}>
+          <Row key={'rowTitle'} gutter={24} className={styles.tableTitle}>
+            <Col span={6}>名称</Col>
+            <Col span={2}>单位</Col>
+            <Col span={3}>价格</Col>
+            <Col span={3}>数量 </Col>
+            <Col span={4}>供应商</Col>
+            <Col span={4}>配送日期</Col>
+            <Col span={2}>操作</Col>
+          </Row>
+          {skuItems.map((item, index) => {
+            const viewSku = item.viewSku || {};
+            const goodsName = `${viewSku.goodsName || ''} ${viewSku.spec || ''} ${viewSku.propertySimple || ''}`;
+            const supplier = item.supplier || {};
+            const supplierId = supplier.supplierId || '';
+            return (
+              <Row key={item.id} gutter={24} className={styles.tableRow}>
+                {getFieldDecorator(`skusItem[${index}]['skuId']`, {
+                  initialValue: item.skuId
+                })}
+                <Col span={6}>{goodsName}</Col>
+                <Col span={2}>{item.unit}</Col>
+                <Col span={3}>
+                  <Form.Item >
 
-          /> : null
-        }
+                    {getFieldDecorator(`skusItem[${index}]['price']`, {
+                      initialValue: item.price,
+                      rules: [{
+                        validator: (rules, value, callback) => {
+                          if (value === 0) callback('请给商品报价');
+                          callback();
+                        }
+                      }]
+                    })(
+                      <InputNumber min={0} />
+                    )}
+                  </Form.Item>
+                </Col>
+                <Col span={3}>
+                  <Form.Item >
+                    {getFieldDecorator(`skusItem[${index}][quantity']`, {
+                      initialValue: item.quantity,
+                      rules: [{
+                        validator: (rules, value, callback) => {
+                          if (value === 0) callback('数量不能为0');
+                          callback();
+                        }
+                      }]
+                    })(
+                      <InputNumber decimalSeparator={'0'} min={0} />
+                    )}
+                  </Form.Item>
+                </Col>
+                <Col span={4}>
+                  <Form.Item>
+                    {getFieldDecorator(`skusItem[${index}]['supplierId']`, {
+                      initialValue: supplierId,
+                      rules: [{
+                        required: true,
+                        message: '请选择供应商'
+                      }]
+                    })(
+                      <Select>
+                        <Option value=''>请选择供应商</Option>
+                        {mySupplier.map(item => (
+                          <Option value={item.id}>{item.supplierName}</Option>
+                        ))}
+                      </Select>
+                    )}
+                  </Form.Item>
+                </Col>
+                <Col span={4}>
+                  <Form.Item>
+                    {getFieldDecorator(`skusItem[${index}]['requiredDate']`, {
+                      initialValue: moment(item.requiredDate || moment().add(1, 'days'), 'YYYY/MM/DD'),
+                      rules: [{
+                        required: true,
+                        message: '请选择配送日期'
+                      }]
+                    })(
+                      <DatePicker
+                        disabledDate={this.disabledDate}
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
+                <Col span={2}><a>删除</a></Col>
+              </Row>
+            )
+          })}
+          <div className={styles.footerWrap}>
+            <div className={styles.footer}>
+              <Button onClick={this.cancelModalShow}>取消</Button>
+              <Button type='primary' htmlType='submit'>保存</Button>
+            </div>
+          </div>
+        </Form>
       </Fragment>
     );
   }
 }
 
-export default connect(({ purOrder, meal, setting }) => ({
-  orderTableForm: purOrder.orderTableForm,
-  mealArray: meal.mealArray,
-  supplier: setting.supplier
-}))
-  (PurOrderTable);
+const wrappedPurOrderTable = Form.create()(PurOrderTable);
+
+export default connect(({ purOrder, useSetting, loading }) => ({
+  skuItems: purOrder.skuItems,
+  mealArray: purOrder.mealArray,
+  mySupplier: useSetting.mySupplier,
+  isLoading: loading.effects['purOrder/']
+}))(wrappedPurOrderTable);

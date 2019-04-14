@@ -7,14 +7,14 @@ const Search = Input.Search;
 export default ({ handleFilter, handleCustomOrder, defaultStatus }) => {
   const menu = (
     <Menu onClick={e => handleCustomOrder(e.key)}>
-      <Menu.Item key="FOrder" >食材订单</Menu.Item>
-      <Menu.Item key="SOrder" >辅料订单</Menu.Item>
+      <Menu.Item key="customS" >食材订单</Menu.Item>
+      <Menu.Item key="customF" >辅料订单</Menu.Item>
     </Menu>
   )
 
   return (
     <Fragment>
-      <Row style={{ marginBottom: 20 }}>
+      <Row style={{ padding: '20px 0' }}>
         <Col>
           <Form layout='inline'>
             <Form.Item label="日期选择:">

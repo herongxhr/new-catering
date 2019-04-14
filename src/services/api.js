@@ -17,9 +17,6 @@ export function camenuPreOrder(id) {
         method: 'post',
         url: `/catering/camenu/preOrder/${id}`,
         headers: { 'Content-Type': 'application/json' },
-        data: {
-            showLoading: true,
-        }
     });
 }
 // 查询分类
@@ -393,16 +390,11 @@ export function putOrderForm(params) {
 }
 
 
-export function queryOrderSelectf(params) {
+export function querySkuList(params) {
     return request({
         method: 'get',
         url: '/pub/sku/complex/pageQuery',
-        data: {
-            showLoading: true,
-            params: {
-                ...params
-            }
-        }
+        data: { params }
     })
 }
 
@@ -700,14 +692,11 @@ export function queryDistributionDetail(params) {
     })
 }
 
-export function querySupplier(params) {
+export function queryMySupplier(params) {
     return request({
         method: 'get',
         url: '/pub/supplier/listQuery',
-        data: {
-            showLoading: true,
-            params,
-        }
+        data: { params }
     })
 }
 //换货申请列表
