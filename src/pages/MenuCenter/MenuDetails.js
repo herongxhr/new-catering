@@ -21,46 +21,56 @@ const ButtonGroup = Button.Group;
 class MenuDetails extends React.Component {
   state = {
     id: '',
-    type: '',
   }
 
-  static getDerivedStateFromProps(nextProps) {
-    const { location: { state } } = nextProps;
+  static getDerivedStateFromProps(props) {
+    const { location: { state } } = props;
     if (state) {
-      const { id = '', type = '' } = state;
-      return { id, type };
+      const { id = '' } = state;
+      return { id };
     }
     return null;
   }
 
-  getMenuDetail = () => {
-    const { id } = this.state;
+  getMenuDetail = id => {
     this.props.dispatch({
       type: `menuCenter/fetchMenuDetails`,
       payload: id
     })
   }
+
+  componentDidMount() {
+    const { id } = this.state;
+    this.getMenuDetail(id);
+  }
+
+  // action操作区按钮回调
+  success() {
+    message.success('操作成功')
+  }
+
   // 点击调整菜单按钮，跳转到调整页面
   // 把id和菜单类型传递过去
   handleArrangeDishes = () => {
-    const { id, type } = this.state;
+    const { id } = this.state;
     this.props.dispatch(routerRedux.push({
-      pathname: `/menu-center/${type}/adjust`,
-      state: { id, type }
+      pathname: `/menubar/my/update`,
+      state: { id }
     }))
   }
 
   viewPurOrder = () => {
     const { id } = this.state;
     this.props.dispatch(routerRedux.push({
-      pathname: '/purOrder/details',
-      state:  {id} 
+      pathname: '/pur-order/details',
+      state: { id }
     }))
   }
+
   yieldPurOrder = () => {
     const { id } = this.state;
     this.props.dispatch(routerRedux.push({
-      pathname: '/purOrder/detail/adjust',
+      pathname: '/pur-order/adjust',
       state: {
         channel: 'M',
         type: "S",
@@ -68,58 +78,40 @@ class MenuDetails extends React.Component {
       }
     }))
   }
-
-  componentDidMount() {
-    this.getMenuDetail();
-  }
   render() {
     const { location, menuDetails, allMealsData } = this.props;
-    const { type } = this.state;
     // 是否我的菜单
-    const isMy = type === 'my';
-    // 菜单编号
-    const menuCode = menuDetails.menuCode || '';
-    const beginDate = menuDetails.beginDate || '';
-    const endDate = menuDetails.endDate || '';
-    // 菜单创建时间
-    const createTime = menuDetails.createTime || '';
-    // 适用年份
-    const nd = menuDetails.nd || '';
-    // 适用周次
-    const week = menuDetails.week || '';
-    const status = menuDetails.status || '';
-    // 供应商
-    const superior = menuDetails.superiorName || '';
-    // 订单信息，未下单的订单没有订单信息
-    const order = menuDetails.order || {};
-    // 订单采购时间
-    const orderCreateTime = order.createTime || '';
-    // 订单的采购时间
-    const orderTime = order.orderTime || '';
-    // 记录订单是否已经执行，在下面内容中根据条件显示
-    const canOperator = status === '0';
+    const isMy = !menuDetails.superiorId;
     // 操作区
     const action = (
       <Fragment>
         <ButtonGroup>
           {/* <Button>打印</Button> */}
-          {canOperator && <Button onClick={this.getMenuDetail}>恢复</Button>}
-          {canOperator && <Button onClick={this.handleArrangeDishes}>调整菜单</Button>}
+          {/* {menuDetails.status === '00'
+            && <Button onClick={this.getMenuDetail}>恢复</Button>} */}
+          {menuDetails.status === '00'
+            && <Button onClick={this.handleArrangeDishes}>调整菜单</Button>}
         </ButtonGroup>
-        {!canOperator && <Button onClick={this.viewPurOrder} type="primary">查看采购单</Button>}
-        {canOperator && <Button onClick={this.yieldPurOrder} type="primary">采购食材</Button>}
+        {menuDetails.status === '00'
+          && <Button onClick={this.yieldPurOrder} type="primary">采购食材</Button>}
+        {(menuDetails.status === '01' || menuDetails.status === '10')
+          && <Button onClick={this.viewPurOrder} type="primary">查看订单</Button>}
       </Fragment >
     );
     // 详细描述
     const description = (
       <DescriptionList className={styles.headerList} size="small" col="2">
-        <Description term="周次">{`第${week}周`}</Description>
+        <Description term="周次">{`第${menuDetails.week || ''}周`}</Description>
         {/* 下达单位只有订单为统一菜单时才显示 */}
-        {!isMy && <Description term="下达单位">{superior}</Description>}
+        {!isMy && <Description term="下达单位">
+          {menuDetails.superior
+            ? menuDetails.superior.superiorName || ''
+            : {}}
+        </Description>}
         <Description term="日期">
-          {getYMD(beginDate) + '~' + getYMD(endDate)}
+          {getYMD(menuDetails.beginDate) + '~' + getYMD(menuDetails.endDate)}
         </Description>
-        <Description term={isMy ? "生成日期" : "下达日期"}>{getYMD(createTime)}</Description>
+        <Description term={isMy ? "生成日期" : "下达日期"}>{getYMD(menuDetails.createTime)}</Description>
       </DescriptionList>
     );
     // 汇总区
@@ -128,7 +120,7 @@ class MenuDetails extends React.Component {
         <Col>
           <div className={styles.textSecondary}>状态</div>
           <div style={{ fontSize: 18 }}>
-            {!canOperator ? '已执行' : (status === '0' ? '未执行' : '已失效')}
+            {menuDetails.statusDisplayName}
           </div>
         </Col>
       </Row>
@@ -139,7 +131,7 @@ class MenuDetails extends React.Component {
         <BreadcrumbComponents {...location} />
         <PageHeadWrapper
           className={styles.headerWrap}
-          title={`菜单编号：${menuCode}`}
+          title={`菜单编号：${menuDetails.menuCode || ''}`}
           logo={<img alt="" src="https://gw.alipayobjects.com/zos/rmsportal/nxkuOJlFJuAUhzlMTCEe.png" />}
           action={action}
           content={description}
@@ -148,10 +140,10 @@ class MenuDetails extends React.Component {
         >
           {/* 进度条 */}
           <Card style={{ width: 1160, marginTop: 20 }}>
-            <Steps current={canOperator ? 1 : 2} progressDot>
-              <Step title="菜单下达" description={getYMDHms(createTime)} />
-              <Step title="采购食材" description={getYMDHms(orderCreateTime)} />
-              <Step title="下达订单" description={getYMDHms(orderTime)} />
+            <Steps current={menuDetails.status === '00' ? 1 : 2} progressDot>
+              <Step title="菜单下达" description={getYMDHms(menuDetails.createTime)} />
+              <Step title="采购食材" description={getYMDHms(menuDetails.orderCreateTime)} />
+              <Step title="下达订单" description={getYMDHms(menuDetails.orderTime)} />
             </Steps>
           </Card>
           {/* 排餐区 */}
@@ -168,6 +160,7 @@ class MenuDetails extends React.Component {
   }
 }
 
-export default connect(({ menuCenter }) => ({
-  ...menuCenter
+export default connect(({ menuCenter, loading }) => ({
+  ...menuCenter,
+  isLoading: loading.effects['menuCenter/fetchMenuDetails']
 }))(MenuDetails)

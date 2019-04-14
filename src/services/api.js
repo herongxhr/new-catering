@@ -208,10 +208,7 @@ export function toUpdateMenu(params) {//修改菜单数据
 export function toDeleteMyMenu(id) {//删除我的菜单条目
     return request({
         method: 'delete',
-        url: `/catering/camenu/${id}`,
-        data: {
-            showLoading: true,
-        }
+        url: `/catering/camenu/${id}`
     })
 }
 

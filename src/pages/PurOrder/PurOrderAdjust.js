@@ -11,9 +11,6 @@ import styles from './PurOrderAdjust.less'
 const Option = Select.Option;
 class PurOrderAdjust extends React.Component {
   state = {
-    alertPrice: false,
-    index: 1,
-    id: '',
     selectModalVisible: false,
     visible: false,
     id: '',
@@ -23,24 +20,20 @@ class PurOrderAdjust extends React.Component {
 
   static getDerivedStateFromProps(props) {
     const { location: { state = {} } } = props;
-    const { channel = '', id = '' } = state;
-    let type = '';
-    switch (channel) {
-      case 'M'://菜单生成
-      case 'customS'://自建食材订单
-        type = 'S';
-        break;
-      case 'S'://辅料超市
-      case 'customF'://自建辅料订单
-        type = 'F';
-        break;
-      default://调整采购单
-        type = '';
-        break;
-    }
+    const { channel = '', id = '', type = '' } = state;
     return { channel, id, type };
   }
 
+  //请求供货商列表
+  getMySupplier = (params = {}) => {
+    this.props.dispatch({
+      type: 'useSetting/fetchMySupplier',
+      payload: {
+        ...params
+      },
+    })
+  }
+  // 根据state中的参数作不同的处理
   componentDidMount() {
     const { channel, id } = this.state;
     const { dispatch } = this.props;
@@ -57,11 +50,8 @@ class PurOrderAdjust extends React.Component {
           payload: id
         })
         break;
-      case 'customF'://自建订单
-      case 'customS'://自建订单
-        dispatch({
-          type: 'purOrder/clearOrderTableForm'
-        })
+      case 'customF'://自建辅料订单
+      case 'customS'://自建食材订单
         break;
       default://调整采购单
         dispatch({
@@ -70,7 +60,28 @@ class PurOrderAdjust extends React.Component {
         })
         break;
     }
+    this.getMySupplier()
   }
+  // 提交表单
+  handleSubmit = e => {
+    e.preventDefault();
+    const { form } = this.props;
+    form.validateFields((err, values) => {
+      if (err) return;
+      const { skusItem: orderDetails } = values;
+      console.log('value', orderDetails);
+      const { channel, id, type } = this.state;
+      // if (this.validatorForm(orderTableForm) == 0) return
+      // //处理传递给后端表格数据
+      // object.type = type || ''
+      // object.channel = channel || ''
+      // object.orderDetails = orderTableForm || {}
+      // if (data) {
+      //   object.camenuId = data.id || ''
+      // }
+    })
+  }
+
 
   cancelModalShow = () => {
     this.setState({
@@ -84,6 +95,7 @@ class PurOrderAdjust extends React.Component {
     })
   }
 
+  // 取消调整二次确认时的回调
   handleOK = () => {
     const { type, data, channel } = this.props.location.state;
     if (channel == 'M') {
@@ -99,64 +111,8 @@ class PurOrderAdjust extends React.Component {
     }
   }
 
-  handleSubmit = () => {
-    let object = {}
-    const { location } = this.props;
-    const { type, data, channel } = location.state;
-    // 类型
-    const { orderTableForm } = this.props
-    //表单验证 message提示
-    if (this.validatorForm(orderTableForm) == 0) return
-    //处理传递给后端表格数据
-    object.type = type || ''
-    object.channel = channel || ''
-    object.orderDetails = orderTableForm || {}
-    if (data) {
-      object.camenuId = data.id || ''
-    }
-    if (this.state.id) {
-      object.id = this.state.id
-      object.callback = (value) => {
-        if (value) {
-          this.TableLinkChange('/purOrder/details', this.state.id)
-        } else {
-          message.error('更新出错')
-        }
-      }
-      this.queryOrderForm(object)
-    }
-    if (!this.state.id) {
-      object.callback = (id) => {
-        if (id) {
-          this.TableLinkChange('/purOrder/details', id)
-        }
-      }
-      this.queryOrderForm(object)
-    }
-  }
-
-  queryOrderForm = (data) => {
-    this.props.dispatch({
-      type: 'purOrder/queryOrderForm',
-      payload: data
-    })
-  }
-
-  //点击出现表单验证card
-  showAlert = () => {
-    this.setState({
-      showAlert: !this.state.showAlert
-    })
-  }
-
-  TableLinkChange = (pathname, id) => {
-    this.props.dispatch(routerRedux.push({
-      pathname,
-      state: { id: id }
-    }))
-  }
   //请求食材选择器列表
-  addSkuItem = () => {
+  showSkuModal = () => {
     this.setState({ selectModalVisible: true })
   }
 
@@ -168,23 +124,14 @@ class PurOrderAdjust extends React.Component {
   }
 
   deleteMeal = (params) => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'purOrder/delelteOrderTableForm',
-      payload: params
-    })
-    dispatch({
-      type: 'purOrder/removeMeal',
+    this.props.dispatch({
+      type: 'purOrder/deleteSkuItem',
       payload: params,
     })
   }
 
   addMeal = (params) => {
     params.editable = true
-    // this.props.dispatch({
-    //   type: 'purOrder/addMeal',
-    //   payload: params,
-    // })
     this.props.dispatch({
       type: 'purOrder/addSkuItem',
       payload: params
@@ -203,10 +150,24 @@ class PurOrderAdjust extends React.Component {
     })
   }
 
+  range = (start, end) => {
+    const result = [];
+    for (let i = start; i < end; i++) {
+      result.push(i);
+    }
+    return result;
+  }
+
+  disabledDate = (current) => {
+    // Can not select days before today and today
+    return current && current < moment().endOf('day');
+  }
+
   render() {
-    console.log('adjust')
-    const { alertPrice, skuList, skuItems } = this.props;
+    const { skuList, skuItems, isLoading, form, mySupplier } = this.props;
+    const { getFieldDecorator } = form;
     const { channel, selectModalVisible } = this.state;
+    getFieldDecorator('skus', { initialValue: skuItems });
     // 选择食材还是辅料
     const selectType = (channel === 'customF' || channel === 'S') ? 'F' : 'S';
     // 类型
@@ -235,8 +196,8 @@ class PurOrderAdjust extends React.Component {
             </Row>
             {skuItems.map((item, index) => {
               const viewSku = item.viewSku || {};
-              const goodsName = `${viewSku.goodsName || ''} ${viewSku.spec || ''} ${viewSku.propertySimple || ''}`;
               const supplier = item.supplier || {};
+              const goodsName = `${viewSku.goodsName || ''} ${viewSku.spec || ''} ${viewSku.propertySimple || ''}`;
               const supplierId = supplier.supplierId || '';
               return (
                 <Row key={item.id} gutter={24} className={styles.tableRow}>
@@ -244,14 +205,14 @@ class PurOrderAdjust extends React.Component {
                     initialValue: item.skuId
                   })}
                   <Col span={6}>{goodsName}</Col>
-                  <Col span={2}>{item.unit}</Col>
+                  <Col span={2}>{viewSku.unit}</Col>
                   <Col span={3}>
                     <Form.Item >
 
                       {getFieldDecorator(`skusItem[${index}]['price']`, {
                         initialValue: item.price,
                         rules: [{
-                          validator: (rules, value, callback) => {
+                          validator: (_, value, callback) => {
                             if (value === 0) callback('请给商品报价');
                             callback();
                           }
@@ -266,7 +227,7 @@ class PurOrderAdjust extends React.Component {
                       {getFieldDecorator(`skusItem[${index}][quantity']`, {
                         initialValue: item.quantity,
                         rules: [{
-                          validator: (rules, value, callback) => {
+                          validator: (_, value, callback) => {
                             if (value === 0) callback('数量不能为0');
                             callback();
                           }
@@ -297,7 +258,7 @@ class PurOrderAdjust extends React.Component {
                   <Col span={4}>
                     <Form.Item>
                       {getFieldDecorator(`skusItem[${index}]['requiredDate']`, {
-                        initialValue: moment(item.requiredDate || moment().add(1, 'days'), 'YYYY/MM/DD'),
+                        initialValue: moment(moment(item.requiredDate) || moment().add(1, 'days'), 'YYYY/MM/DD'),
                         rules: [{
                           required: true,
                           message: '请选择配送日期'
@@ -323,7 +284,7 @@ class PurOrderAdjust extends React.Component {
           <Button
             style={{ width: '100%', marginTop: 16, marginBottom: 8 }}
             type="dashed"
-            onClick={this.addSkuItem}
+            onClick={this.showSkuModal}
             icon="plus"
           >添加</Button>
           {/* 选择辅料或食材 */}
@@ -346,7 +307,8 @@ class PurOrderAdjust extends React.Component {
             width='340px'
             closable={false}
           >
-            <Alert message='不保存吗' type="warning" showIcon style={{ background: 'white', border: '0px', marginTop: '40px' }} />
+            <Alert message='放弃所做的调整吗？' type="warning" showIcon
+              style={{ background: 'white', border: '0px', marginTop: '40px' }} />
           </Modal>
         </PageHeaderWrapper>
       </Fragment>
@@ -356,11 +318,9 @@ class PurOrderAdjust extends React.Component {
 
 const WrappedPurOrderAdjust = Form.create()(PurOrderAdjust)
 
-export default connect(({ purOrder, loading, }) => ({
+export default connect(({ purOrder, loading, useSetting }) => ({
   orderDetails: purOrder.orderDetails,
-  alertPrice: purOrder.alertPrice,
-  orderTableForm: purOrder.orderTableForm,
-  orderItemGoods: purOrder.changeOrderForm,
+  mySupplier: useSetting.mySupplier,
   skuList: purOrder.skuList,
   mealArray: purOrder.mealArray,
   skuItems: purOrder.skuItems,

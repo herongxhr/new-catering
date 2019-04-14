@@ -82,14 +82,14 @@ class MenuCenter extends React.Component {
 			state: {
 				channel: 'M',
 				type: "S",
-				data: { id: record.id }
+				id: record.id
 			}
 		}))
 	}
 	// 列表项操作：调整
 	updateMenu = record => {
 		this.props.dispatch(routerRedux.push({
-			pathname: '/menu-center/my/update',
+			pathname: '/menu-center/unified/update',
 			state: { id: record.id }
 		}))
 	}

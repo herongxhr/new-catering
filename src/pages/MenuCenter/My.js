@@ -84,7 +84,7 @@ class MyMenu extends React.Component {
 			state: {
 				channel: 'M',
 				type: "S",
-				data: { id: record.id }
+				id: record.id
 			}
 		}))
 	}

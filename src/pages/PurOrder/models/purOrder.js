@@ -144,12 +144,7 @@ export default {
                 skuItems: payload
             }
         },
-        addSkuItem(state, { payload }) {
-            return {
-                ...state,
-                skuItems: state.skuItems.concat(payload)
-            }
-        },
+
         delelteOrderTableForm(state, { payload }) {
             const { skuItems } = state
             for (let i = 0; i < skuItems.length; i++) {
@@ -213,10 +208,16 @@ export default {
         //         mealArray: state.mealArray.concat(payload),
         //     };
         // },
-        removeMeal(state, { payload }) {
+        addSkuItem(state, { payload }) {
             return {
                 ...state,
-                mealArray: state.mealArray.filter(item => item.skuId !== payload)
+                skuItems: state.skuItems.concat(payload)
+            }
+        },
+        deleteSkuItem(state, { payload }) {
+            return {
+                ...state,
+                skuItems: state.skuItems.filter(item => item.skuId !== payload)
             }
         },
         //清除菜单

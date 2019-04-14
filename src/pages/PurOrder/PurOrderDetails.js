@@ -56,18 +56,20 @@ class PurOrderDetails extends React.Component {
 		current: 1,
 		visible: false,
 		id: '',// 订单id
+		type: '',//食材还是辅料
 	}
 
 	static getDerivedStateFromProps(props) {
 		const { location: { state = {} } } = props;
-		return { id: state.id || '' };
+		const { id = '', type = '' } = state;
+		return { id, type };
 	}
 
 	getOrderDetails = () => {
 		const { id } = this.state;
 		this.props.dispatch({
 			type: 'purOrder/getOrderDetails',
-			payload: id
+			payload: id,
 		})
 	}
 
@@ -89,6 +91,11 @@ class PurOrderDetails extends React.Component {
 					},
 				}).then(this.success).then(this.redirectToPurOrderList);
 				break;
+			case 'adjust':
+				dispatch(routerRedux.push({
+					pathname: '/pur-order/adjust',
+					state: { id, type: this.state.type }
+				}))
 			case 'order':// 下单
 				dispatch({
 					type: 'purOrder/yieldOrder',

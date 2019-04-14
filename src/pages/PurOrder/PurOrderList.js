@@ -53,15 +53,18 @@ class PurOrderList extends React.Component {
 		switch (actionId) {
 			case 'customF':// 新建
 			case 'customS':
-				this.props.dispatch(routerRedux.push({
+				dispatch({// 清除旧数据
+					type: 'purOrder/clearOrderTableForm'
+				})
+				dispatch(routerRedux.push({
 					pathname: `/pur-order/${actionId}`,
-					state: { channel: `${actionId}` }
+					state: { channel: `${actionId}`, type: actionId.substring(6, 8) }
 				}))
 				break;
 			case 'preview':// 查看
 				dispatch(routerRedux.push({
 					pathname: '/pur-order/details',
-					state: { id: record.id }
+					state: { id: record.id, type: record.type }
 				}));
 				break;
 			case 'delete':// 删除

@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { Card, DatePicker, Button, Row, Col, message } from 'antd';
+import { Card, DatePicker, Button, Row, Col, message, Form } from 'antd';
 import { connect } from 'dva';
-import ArrangeDishes from '../../components/ArrangeDishes';
+import moment from 'moment';
+import ArrangeDishes from '@/components/ArrangeDishes';
 import styles from './CustomMenu.less';
-import BreadcrumbComponent from '../../components/BreadcrumbComponent';
+import BreadcrumbComponent from '@/components/BreadcrumbComponent';
 import createHistory from 'history/createBrowserHistory';
 import { routerRedux } from 'dva/router';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
+const FormItem = Form.Item;
 const history = createHistory();
 const { WeekPicker, } = DatePicker;
 /**
@@ -16,52 +18,61 @@ const { WeekPicker, } = DatePicker;
 class CustomMenu extends Component {
   state = {
     id: '',
-    menuType: '',
-    templateType: 'P',
+    // menuTemplateId和templateFrom主要是由模板生成菜单时需要
+    // 另外后端也需要传递这两个数据
+    menuTemplateId: '',
+    templateFrom: 'P',
     nd: '',
     week: '',
   }
 
   static getDerivedStateFromProps(props) {
-    const { match: { params } } = props;
-    const { id = '', menuType = '', templateType = '' } = params;
-    return { id, menuType, templateType }
+    const { location: { state = {} } } = props;
+    // 只有从模板新建，选择了模板后
+    // location.state才存在，直接自定义菜单是location.state为undefined
+    if (state) {
+      const { menuTemplateId = '', templateFrom = '', id = '' } = state;
+      return { menuTemplateId, templateFrom, id }
+    }
+    return null;
   }
 
-  // 选择周次回调
-  handleSelectWeek = (_, dateString) => {
-    const [, nd = '', week = ''] = dateString && dateString.match(/^(\d{4})-(\d{2})/);
-    this.setState({ nd, week });
-  }
 
   handleClickCancel = () => {
     history.goBack();
   }
 
-  handleClickOk = () => {
-    // 从局部state中取数据，再向后端传数据
-    const { nd = '', week = '' } = this.state;
-    if (!nd || !week) {
-      this.warning();
-      return;
-    }
-    const { type: templateFrom, ...rest } = this.state;
-    this.props.dispatch({
-      type: 'menuCenter/customMenu',
-      payload: { templateFrom, ...rest },
-      callback: this.goMenuDetails
-    });
+  handleSubmit = e => {
+    e.preventDefault();
+    const { dispatch, allMealsData, form } = this.props;
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      const { weekMoment } = fieldsValue;
+      const [, nd = '', week = ''] = weekMoment
+        ? moment(weekMoment).format('YYYY-W').match(/^(\d{4})-(\d{2})/)
+        : [];
+      this.setState({ nd, week });
+      if (!allMealsData.length) {
+        this.warning();
+        return;
+      }
+      dispatch({
+        type: 'menuCenter/customMenu',
+        payload: { ...this.state, nd, week },
+        callback: data => this.goMenuDetails(data)
+      })
+    })
   }
 
   // 跳转到详情页
   // 同时传递后端返回的id和局部state中保存的templateType
   goMenuDetails = data => {
-    const { type, id } = this.state;
-    const url = type === 'C' ? 'unified' : 'my';
+    const { id } = this.state;
     this.success();
     this.props.dispatch(routerRedux.push({
-      pathname: `/menu-center/${url}/details`,
-      state: { id: id || data, type: type }
+      pathname: `/menubar/my-menu/details`,
+      // 如果是新增，后台返回id,编辑后台返回true,false
+      state: { id: id || data }
     }))
   }
 
@@ -69,70 +80,89 @@ class CustomMenu extends Component {
     message.success('菜单保存成功')
   }
   warning = () => {
-    message.warning('请选择菜单的适用周次');
-  };
+    message.warning('您还没有排餐呢')
+  }
 
   componentDidMount() {
-    const { id, type } = this.state;
-    // 如果是从模板新建，要获取相应模板的详情
+    const { id, menuTemplateId, templateFrom } = this.state;
+    // 编辑模式
     if (id) {
       this.props.dispatch({
-        type: `menuCenter/fetch${type}TemplateDetails`,
+        type: `menuCenter/fetchMenuDetails`,
         payload: id
+      })
+
+    }
+    // 如果是由模板生成菜单，则要请求模板中的菜品数据
+    if (menuTemplateId && templateFrom) {
+      this.props.dispatch({
+        type: `menuCenter/fetch${templateFrom}TemplateDetails`,
+        payload: menuTemplateId
       })
     }
   }
+  // 不能选择的日期
+  disabledWeek = current => {
+    return current && current < moment().endOf('day');
+  }
 
   render() {
-    const { location, isLoading } = this.props;
+    const { location, isLoading, form, menuDetails } = this.props;
     return (
       <div>
         <BreadcrumbComponent {...location} />
-        <PageHeaderWrapper
-          withTabs={false}
-        >
-          <Card className={styles.wrap}>
-            <Row>
-              <Col span={8}>
-                适用周次：<WeekPicker
-                  ref={ref => this.weekpicker = ref}
-                  style={{ width: 260 }}
-                  onChange={this.handleSelectWeek}
-                  placeholder="选择周次"
-                />
-              </Col>
-            </Row>
-          </Card>
-          {/* 排餐控件 */}
-          <Card
-            className={styles.wrap}
-            style={{ marginBottom: 76 }}
-            bodyStyle={{ padding: 20 }}>
-            <ArrangeDishes
-              isMy={this.state.menuType !== 'unified'}
-              {...this.props}
-            />
-          </Card>
+        <PageHeaderWrapper withTabs={false}>
+          <Form onSubmit={this.handleSubmit} layout='inline'>
+            <Card className={styles.wrap}>
+              <Row>
+                <Col span={8}>
+                  <FormItem label={'适用周次'}>
+                    {form.getFieldDecorator('weekMoment', {
+                      // 新建时无初始值
+                      initialValue: this.state.id
+                        ? moment(`${menuDetails.nd}-${menuDetails.week}`, 'YYYY-W')
+                        : moment(moment(), 'YYYY-W'),
+                      rules: [{
+                        required: true,
+                        message: '请选择菜单的适用周次！',
+                      }]
+                    })(
+                      <WeekPicker
+                        disabledDate={this.disabledWeek}
+                        style={{ width: 260 }} placeholder="选择周次" />)}
+                  </FormItem>
+                </Col>
+              </Row>
+            </Card>
+            <Card
+              className={styles.wrap}
+              style={{ marginBottom: 76 }}
+              bodyStyle={{ padding: 20 }}>
+              {/* 排餐控件 */}
+              <ArrangeDishes isMy={true} {...this.props} />
+            </Card>
+            {/* 底部按钮 */}
+            <div className={styles.footerWrap}>
+              <div className={styles.footerBtn}>
+                <Button
+                  onClick={this.handleClickCancel}
+                >取消</Button>
+                <Button
+                  type="primary"
+                  htmlType='submit'
+                  loading={isLoading}
+                >保存</Button>
+              </div>
+            </div>
+          </Form>
         </PageHeaderWrapper>
-        {/* 底部按钮 */}
-        <div className={styles.footerWrap}>
-          <div className={styles.footerBtn}>
-            <Button
-              onClick={this.handleClickCancel}
-            >取消</Button>
-            <Button
-              onClick={this.handleClickOk} type='primary'
-              loading={isLoading}
-            >保存</Button>
-          </div>
-        </div>
-        {/* 如果是自定义菜单时显示 */}
       </div>
     )
   }
 }
 
+const WrappedCustomMenu = Form.create()(CustomMenu)
 export default connect(({ menuCenter, loading }) => ({
   isLoading: loading.effects['menuCenter/newMenu'],
   ...menuCenter
-}))(CustomMenu);
+}))(WrappedCustomMenu);
