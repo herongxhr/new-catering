@@ -38,7 +38,8 @@ export default {
     // https://ant.design/docs/react/customize-theme-cn
     theme: {
         'primary-color': defaultSettings.primaryColor,
-        'layout-header-height': '70px'
+        'layout-header-height': '70px',
+        'layout-header-background': 'rgba(31,37,62,1)'
     },
     lessLoaderOptions: {
         javascriptEnabled: true,

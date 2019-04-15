@@ -39,9 +39,16 @@ export default class ArrangeDishes extends Component {
         currFoodId: ''
     }
 
-    // 选菜/选食材弹出框中点击确定或取消的回调
-    // 将state重置
-    hideModal = () => {
+    copyMealsData = []
+
+    // 将state重置,恢复到之前数据
+    handleModalAction = action => {
+        if (action === 'cancel') {
+            this.props.dispatch({
+                type: 'menuCenter/resetMealsData',
+                payload: this.copyMealsData
+            })
+        }
         this.setState({
             showModal: false,
             zj: '',
@@ -97,38 +104,55 @@ export default class ArrangeDishes extends Component {
             this.setState({
                 showModal: true
             })
+            // 备份处理前的数据
+            this.copyMealsData = this.props.allMealsData;
         })
     }
 
     // 在选菜/选食材弹出框中点击添加或点击标签关闭时回调
     // flag为1为添加，-1时为删除，0为替换
     // 使用state中的zj和mealTimes定位单元格
-    changeArrangedMeals = (record, flag) => {
+    changeArrangedMeals = (record, flag, id) => {
+        const doAciton = () => {
+            this.props.dispatch({
+                type: 'menuCenter/changeArrangedMeals',
+                payload: {
+                    record,
+                    ...this.state,
+                    flag
+                },
+            })
+        }
         // 每次换菜时先将id设为currFoodId
         if (flag === 0) {
+            // 先换菜，然后把换后的菜设为currFoodId
+            doAciton()
             this.setState({
                 currFoodId: record.id
             })
+            return;
         }
-        this.props.dispatch({
-            type: 'menuCenter/changeArrangedMeals',
-            payload: {
-                record,
-                ...this.state,
-                flag
-            },
-        })
+
         // 删除后currFoodId为''
         if (flag === -1) {
+            if (id) {//标签删菜
+                // 先设置currFoodId
+                this.setState({ currFoodId: id },
+                    () => doAciton());
+                return;
+            }
+            doAciton();
             this.setState({ currFoodId: '' })
+            return;
         };
+        if (flag === 1) doAciton();
     };
 
-    // 选菜或选食材中筛选区域
-    getDishes = params => {
+    // 选菜modal获取菜品列表
+    getDishList = params => {
         const { dispatch } = this.props;
         dispatch({
-            type: 'menuCenter/fetchDishes',
+            type: 'menuCenter/fetchDishList',
             payload: params
         })
     }
@@ -256,12 +280,12 @@ export default class ArrangeDishes extends Component {
                     isAdd={isAdd}
                     // modal的显示属性
                     visible={this.state.showModal}
-                    // 隐藏modal的方法
-                    handleHideModal={this.hideModal}
+                    // modal点击确定或取消的方法
+                    handleModalAction={this.handleModalAction}
                     // 菜品数据
                     dishesData={dishesData}
                     // 获取菜品方法
-                    getDishes={this.getDishes}
+                    getDishList={this.getDishList}
                     // 选择类别下拉框时的回调
                     doFilter={this.handlFetchDishes}
                     // 关闭标签时的回调

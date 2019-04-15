@@ -1,5 +1,5 @@
 import {
-    queryDishes,
+    queryDishList,
     queryMenuList,
     queryMenuDetails,
     toUpdateMenu,
@@ -177,8 +177,8 @@ export default {
             })
         },
         // 获取菜品数据 
-        *fetchDishes({ payload }, { call, put }) {
-            const data = yield call(queryDishes, payload);
+        *fetchDishList({ payload }, { call, put }) {
+            const data = yield call(queryDishList, payload);
             yield put({
                 type: 'saveDishes',
                 payload: data || {}
@@ -348,13 +348,18 @@ export default {
                     return {
                         ...state,
                         allMealsData: state.allMealsData
-                            .filter(meal => meal.foodId !== currFoodId)
+                            .filter(meal =>
+                                meal.foodId !== currFoodId
+                                || meal.zj !== zj
+                                || meal.mealTimes !== mealTimes)
                     }
                 case 0:
                     return {
                         ...state,
                         allMealsData: state.allMealsData.map(item => {
-                            if (item.foodId === currFoodId) {
+                            if (item.foodId === currFoodId
+                                && item.zj === zj
+                                && item.mealTimes === mealTimes) {
                                 return {
                                     foodId: record.id,
                                     viewFood: {

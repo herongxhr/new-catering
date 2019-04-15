@@ -1,6 +1,6 @@
 import React from 'react';
-import { Modal, Select, Input, Table, Tag } from 'antd';
-import { router } from 'umi';
+import { Modal, Select, Input, Table, Tag, Popover } from 'antd';
+import { withRouter } from "react-router";
 import styles from './index.module.less';
 
 const { Search } = Input;
@@ -37,29 +37,38 @@ class SelectDishes extends React.Component {
     }
     // 点击分类或搜索关键字搜索菜品
     filterToGetData = (params = {}) => {
-        const { getDishes } = this.props;
+        const { getDishList } = this.props;
         this.setState({ ...params });
         // 发请求
-        getDishes({
+        getDishList({
             ...this.state,
             ...params
         });
     }
-
-    // 查看详情
     handlePreviewItem = id => {
-        router.push(`/dishDetails/${id}`);
+        this.props.history.push({
+            pathname: '/dishDetails',
+            state: { id }
+        })
     }
 
+    handleOnOk = () => {
+        this.props.handleModalAction('ok');
+    }
+    handleOnCancel = () => {
+        this.props.handleModalAction('cancel');
+    }
     componentDidMount() {
-        this.filterToGetData();
+        this.filterToGetData()
     }
     render() {
         // 弹出框modal表头数据
         const tableColumns = [
             {
                 title: '名称',
-                dataIndex: 'foodName'
+                dataIndex: 'foodName',
+                render: (text, record) =>
+                    <a onClick={() => this.handlePreviewItem(record.id)}>{text}</a>
             },
             {
                 title: '类别',
@@ -75,9 +84,19 @@ class SelectDishes extends React.Component {
             {
                 title: '图片',
                 dataIndex: 'img',
-                render: (_, record) => (
-                    <a onClick={() => { }}>查看</a>
-                )
+                render: (_, record) => {
+                    const imgs = (<div>
+                        <h3>图片1</h3>
+                        <h3>图片2</h3>
+                        <h3>图片3</h3>
+                        <h3>图片4</h3>
+                    </div>)
+                    return (<Popover
+                        trigger='click'
+                        content={imgs}
+                        placement='right'><a>查看</a>
+                    </Popover>)
+                }
             },
             {
                 title: '操作',
@@ -100,7 +119,6 @@ class SelectDishes extends React.Component {
         const {
             isAdd, // 是否加菜
             visible, // 控制显示与隐藏
-            handleHideModal, // 隐藏modal的方法
             changeArrangedMeals, // 选菜，删菜，换菜方法
             dishesData, // 菜品数据
             currTDMeals, // 已选菜品数据
@@ -117,9 +135,9 @@ class SelectDishes extends React.Component {
                 }}
                 key={item.foodId}
                 // 判断是不是自己加的菜
-                closable={item.isAdd}
+                closable={isAdd}
                 onClose={() => {
-                    changeArrangedMeals(item, -1)
+                    changeArrangedMeals(item, -1, item.foodId)
                 }} >
                 {item.viewFood.foodName}：{item.viewFood.gg && item.viewFood.gg.substring(0, 14) + '...'}
             </Tag>));
@@ -132,8 +150,8 @@ class SelectDishes extends React.Component {
                 title={isAdd ? '加菜' : "换菜"}
                 visible={visible}
                 okText="保存"
-                onOk={handleHideModal}
-                onCancel={handleHideModal}
+                onOk={this.handleOnOk}
+                onCancel={this.handleOnCancel}
             >
                 <div className={styles.leftContent}>
                     <div className={styles.filterWrap}>
@@ -159,11 +177,6 @@ class SelectDishes extends React.Component {
                         dataSource={records}
                         onChange={({ current, pageSize }) => this.filterToGetData({ current, pageSize })}
                         rowKey="id"
-                        onRow={record => {
-                            return {
-                                onClick: () => this.handlePreviewItem(record.id),
-                            }
-                        }}
                         pagination={{
                             current: dishesData.current || 1,
                             pageSize: dishesData.size || 10,
@@ -183,5 +196,5 @@ class SelectDishes extends React.Component {
     }
 }
 
-export default SelectDishes;
+export default withRouter(SelectDishes);
 

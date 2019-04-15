@@ -222,14 +222,11 @@ export function toNewMenu(params) {//新建菜单数据
         }
     })
 }
-export function queryDishes(params) {//获取菜品数据
+export function queryDishList(params) {//获取菜品数据
     return request({
         method: 'get',
         url: '/pub/food/pageQuery',
-        data: {
-            showLoading: true,
-            params: { ...params }
-        }
+        data: { params }
     })
 }
 

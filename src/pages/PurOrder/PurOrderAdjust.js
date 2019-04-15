@@ -82,7 +82,6 @@ class PurOrderAdjust extends React.Component {
     })
   }
 
-
   cancelModalShow = () => {
     this.setState({
       visible: true

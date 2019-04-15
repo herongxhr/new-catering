@@ -113,34 +113,26 @@ class CustomMenu extends Component {
         <BreadcrumbComponent {...location} />
         <PageHeaderWrapper withTabs={false}>
           <Form onSubmit={this.handleSubmit} layout='inline'>
-            <Card className={styles.wrap}>
-              <Row>
-                <Col span={8}>
-                  <FormItem label={'适用周次'}>
-                    {form.getFieldDecorator('weekMoment', {
-                      // 新建时无初始值
-                      initialValue: this.state.id
-                        ? moment(`${menuDetails.nd}-${menuDetails.week}`, 'YYYY-W')
-                        : moment(moment(), 'YYYY-W'),
-                      rules: [{
-                        required: true,
-                        message: '请选择菜单的适用周次！',
-                      }]
-                    })(
-                      <WeekPicker
-                        disabledDate={this.disabledWeek}
-                        style={{ width: 260 }} placeholder="选择周次" />)}
-                  </FormItem>
-                </Col>
-              </Row>
-            </Card>
-            <Card
-              className={styles.wrap}
-              style={{ marginBottom: 76 }}
-              bodyStyle={{ padding: 20 }}>
-              {/* 排餐控件 */}
-              <ArrangeDishes isMy={true} {...this.props} />
-            </Card>
+            <Row className={styles.filter}>
+              <Col span={8} >
+                <FormItem label={'适用周次'}>
+                  {form.getFieldDecorator('weekMoment', {
+                    // 新建时无初始值
+                    initialValue: this.state.id
+                      ? moment(`${menuDetails.nd}-${menuDetails.week}`, 'YYYY-W')
+                      : moment(moment().add(1,'weeks'), 'YYYY-W'),
+                    rules: [{
+                      required: true,
+                      message: '请选择菜单的适用周次！',
+                    }]
+                  })(
+                    <WeekPicker
+                      disabledDate={this.disabledWeek}
+                      style={{ width: 260 }} placeholder="选择周次" />)}
+                </FormItem>
+              </Col>
+            </Row>
+            <ArrangeDishes isMy={true} {...this.props} />
             {/* 底部按钮 */}
             <div className={styles.footerWrap}>
               <div className={styles.footerBtn}>
